@@ -1,4 +1,4 @@
-# navigation_app
+# salesquake_app
 
 A new Flutter project.
 

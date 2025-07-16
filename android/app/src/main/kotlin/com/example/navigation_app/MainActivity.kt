@@ -1,4 +1,4 @@
-package com.example.navigation_app
+package com.example.salesquake_app
 
 import io.flutter.embedding.android.FlutterActivity
 
