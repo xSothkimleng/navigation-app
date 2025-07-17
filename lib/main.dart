@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:salesquake_app/screens/splash_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:salesquake_app/screens/auth/auth_loading_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
@@ -11,13 +14,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Navigation Map App',
+      title: 'SalesQuake',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'PlusJakartaSans',
         primarySwatch: Colors.blue,
       ),
-      home: const SplashScreen(),
+      home: const AuthLoadingScreen(),
     );
   }
 }
