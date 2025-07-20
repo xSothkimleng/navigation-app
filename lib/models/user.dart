@@ -1,55 +1,131 @@
 // User data model
 class User {
   final String id;
-  final String name;
+  final String firstName;
+  final String lastName;
   final String email;
-  final String? profileImageUrl;
-  final DateTime createdAt;
+  final String? profileImage;
+  final String? tenantId;
 
   User({
     required this.id,
-    required this.name,
+    required this.firstName,
+    required this.lastName,
     required this.email,
-    this.profileImageUrl,
-    required this.createdAt,
+    this.profileImage,
+    this.tenantId,
   });
 
-  // Convert from JSON
+  String get fullName => '$firstName $lastName'.trim();
+
+  // Get user initials for avatar display
+  String get initials {
+    String result = firstName.isNotEmpty ? firstName[0].toUpperCase() : '';
+    if (lastName.isNotEmpty) {
+      result += lastName[0].toUpperCase();
+    }
+    return result;
+  }
+
+  // Check if user has a profile image
+  bool get hasProfileImage => profileImage != null && profileImage!.isNotEmpty;
+
+  // Validate email format
+  bool get hasValidEmail => email.contains('@') && email.contains('.');
+
+  // Check if user data is complete
+  bool get isComplete =>
+      id.isNotEmpty &&
+      firstName.isNotEmpty &&
+      lastName.isNotEmpty &&
+      email.isNotEmpty &&
+      hasValidEmail;
+
+  // Convert from JSON - handles both camelCase and snake_case from API
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'],
-      name: json['name'],
-      email: json['email'],
-      profileImageUrl: json['profile_image_url'],
-      createdAt: DateTime.parse(json['created_at']),
+      id: json['id']?.toString() ?? '',
+      // Handle both camelCase (frontend) and snake_case (API) formats
+      firstName:
+          json['firstName']?.toString() ?? json['first_name']?.toString() ?? '',
+      lastName:
+          json['lastName']?.toString() ?? json['last_name']?.toString() ?? '',
+      email: json['email']?.toString() ?? '',
+      profileImage:
+          json['profileImage']?.toString() ?? json['profile_image']?.toString(),
+      tenantId: json['tenantId']?.toString() ?? json['tenant_id']?.toString(),
     );
   }
 
-  // Convert to JSON
+  // Convert to JSON for API (snake_case format)
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'name': name,
+      'first_name': firstName,
+      'last_name': lastName,
       'email': email,
-      'profile_image_url': profileImageUrl,
-      'created_at': createdAt.toIso8601String(),
+      'profile_image': profileImage,
+      'tenant_id': tenantId,
     };
   }
 
-  // Create a copy with updated fields
+  // Convert to JSON for frontend (camelCase format)
+  Map<String, dynamic> toJsonCamelCase() {
+    return {
+      'id': id,
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'profileImage': profileImage,
+      'tenantId': tenantId,
+    };
+  }
+
+  // Create a copy of the user with updated fields
   User copyWith({
     String? id,
-    String? name,
+    String? firstName,
+    String? lastName,
     String? email,
-    String? profileImageUrl,
-    DateTime? createdAt,
+    String? profileImage,
+    String? tenantId,
   }) {
     return User(
       id: id ?? this.id,
-      name: name ?? this.name,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
       email: email ?? this.email,
-      profileImageUrl: profileImageUrl ?? this.profileImageUrl,
-      createdAt: createdAt ?? this.createdAt,
+      profileImage: profileImage ?? this.profileImage,
+      tenantId: tenantId ?? this.tenantId,
     );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is User &&
+        other.id == id &&
+        other.firstName == firstName &&
+        other.lastName == lastName &&
+        other.email == email &&
+        other.profileImage == profileImage &&
+        other.tenantId == tenantId;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      id,
+      firstName,
+      lastName,
+      email,
+      profileImage,
+      tenantId,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'User(id: $id, firstName: $firstName, lastName: $lastName, email: $email, profileImage: $profileImage, tenantId: $tenantId)';
   }
 }

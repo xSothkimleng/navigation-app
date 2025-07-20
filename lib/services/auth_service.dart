@@ -6,10 +6,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/api_response.dart';
 
 class AuthService {
-  static String get _baseUrl => dotenv.env['API_BASE_URL'] ?? 'http://localhost';
+  static String get _baseUrl =>
+      dotenv.env['API_BASE_URL'] ?? 'http://localhost';
   static String get _port => dotenv.env['API_PORT'] ?? '8080';
   static String get _authUrl => '$_baseUrl:$_port/auth';
-  
+
   static String? _jwtToken;
   static Map<String, dynamic>? _userInfo;
 
@@ -38,18 +39,18 @@ class AuthService {
       if (response.statusCode == 200) {
         // Backend returns plain text "login successful" for success
         print('Login successful - Response: ${response.body}');
-        
+
         // Handle cookies from response if present
         final cookies = response.headers['set-cookie'];
         if (cookies != null) {
           print('Received cookies: $cookies');
-          
+
           // Extract JWT token from cookies
           final jwtCookie = _extractJwtFromCookies(cookies);
           if (jwtCookie != null) {
             _jwtToken = jwtCookie;
             await _saveTokenToStorage(jwtCookie);
-            
+
             // Decode JWT to extract user info
             final userInfo = _decodeJWT(jwtCookie);
             if (userInfo != null) {
@@ -65,7 +66,6 @@ class AuthService {
         }
 
         return ApiResponse<LoginResponse>(
-          success: true,
           data: LoginResponse(
             token: _jwtToken ?? '',
             user: _userInfo,
@@ -77,13 +77,13 @@ class AuthService {
         try {
           final responseData = jsonDecode(response.body);
           return ApiResponse<LoginResponse>(
-            success: false,
-            error: responseData['message'] ?? responseData['error'] ?? 'Login failed',
+            error: responseData['message'] ??
+                responseData['error'] ??
+                'Login failed',
           );
         } catch (e) {
           // If JSON parsing fails, use the raw response
           return ApiResponse<LoginResponse>(
-            success: false,
             error: response.body.isNotEmpty ? response.body : 'Login failed',
           );
         }
@@ -91,7 +91,6 @@ class AuthService {
     } catch (e) {
       print('Login error: $e');
       return ApiResponse<LoginResponse>(
-        success: false,
         error: 'Network error: ${e.toString()}',
       );
     }
@@ -116,9 +115,9 @@ class AuthService {
       // In production, you should verify the token with the secret
       final jwt = JWT.decode(token);
       final payload = jwt.payload;
-      
+
       print('JWT Payload: $payload');
-      
+
       if (payload is Map<String, dynamic>) {
         return {
           'tenant_id': payload['tenant_id'],
@@ -158,7 +157,8 @@ class AuthService {
   static Future<String?> getTokenFromStorage() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('jwt_token');
-    print('Retrieved token from storage: ${token != null ? '${token.substring(0, 20)}...' : 'null'}');
+    print(
+        'Retrieved token from storage: ${token != null ? '${token.substring(0, 20)}...' : 'null'}');
     return token;
   }
 
@@ -166,27 +166,27 @@ class AuthService {
     print('=== CHECKING LOGIN STATUS ===');
     final keepMeLoggedIn = await getKeepMeLoggedIn();
     print('Keep me logged in preference: $keepMeLoggedIn');
-    
+
     if (!keepMeLoggedIn) {
       print('Keep me logged in is false, user not logged in');
       return false;
     }
-    
+
     final token = await getTokenFromStorage();
     print('Token from storage: ${token?.substring(0, 20)}...');
-    
+
     if (token == null) {
       print('No token found in storage');
       return false;
     }
-    
+
     // Check if token is valid
     final userInfo = _decodeJWT(token);
     print('Decoded user info: $userInfo');
-    
+
     if (userInfo != null) {
       final exp = userInfo['exp'];
-      
+
       // If token has expiration, check if it's expired
       if (exp != null) {
         final expirationTime = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
@@ -194,7 +194,7 @@ class AuthService {
         print('Token expires at: $expirationTime');
         print('Current time: $now');
         print('Token expired: ${now.isAfter(expirationTime)}');
-        
+
         if (now.isAfter(expirationTime)) {
           // Token expired, clear it
           print('Token expired, clearing tokens');
@@ -205,14 +205,14 @@ class AuthService {
         // Token doesn't have expiration, assume it's valid
         print('Token does not have expiration field, assuming valid');
       }
-      
+
       // Set current token and user info for app use
       _jwtToken = token;
       _userInfo = userInfo;
       print('User is logged in, token is valid');
       return true;
     }
-    
+
     print('Failed to decode token');
     return false;
   }
@@ -230,7 +230,7 @@ class AuthService {
       final headers = {
         'Content-Type': 'application/json',
       };
-      
+
       final token = await getTokenFromStorage();
       if (token != null) {
         headers['Cookie'] = 'jwt=$token';
@@ -249,9 +249,8 @@ class AuthService {
       if (response.statusCode == 200 || response.statusCode == 404) {
         // Clear stored tokens and user info
         await clearTokens();
-        
+
         return ApiResponse<String>(
-          success: true,
           data: 'Logout successful',
           message: 'Logged out successfully',
         );
@@ -260,9 +259,8 @@ class AuthService {
         // since JWT tokens are stateless
         print('Backend logout failed, clearing local tokens anyway');
         await clearTokens();
-        
+
         return ApiResponse<String>(
-          success: true,
           data: 'Logout successful',
           message: 'Logged out successfully (local)',
         );
@@ -272,9 +270,8 @@ class AuthService {
       // Even if network fails, we can still clear local tokens
       // since JWT tokens are stateless
       await clearTokens();
-      
+
       return ApiResponse<String>(
-        success: true,
         data: 'Logout successful',
         message: 'Logged out successfully (offline)',
       );
@@ -287,16 +284,14 @@ class AuthService {
     try {
       print('Performing local logout...');
       await clearTokens();
-      
+
       return ApiResponse<String>(
-        success: true,
         data: 'Logout successful',
         message: 'Logged out successfully',
       );
     } catch (e) {
       print('Error during local logout: $e');
       return ApiResponse<String>(
-        success: false,
         error: 'Error during logout: ${e.toString()}',
       );
     }

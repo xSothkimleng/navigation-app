@@ -2,6 +2,7 @@ import 'auth_service.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../models/user.dart';
 
 class UserService {
   static String get _baseUrl =>
@@ -10,7 +11,7 @@ class UserService {
   static String get _apiUrl => '$_baseUrl:$_port/api';
 
   // Get user data from JWT token and fetch full profile from API
-  static Future<Map<String, dynamic>?> getCurrentUser() async {
+  static Future<User?> getCurrentUser() async {
     try {
       print('=== USER SERVICE: Getting current user ===');
 
@@ -30,8 +31,10 @@ class UserService {
           final userDetail = await getUserDetailFromUserId(userId);
 
           if (userDetail != null) {
-            // Add tenant ID from JWT to the user detail
-            userDetail['tenantId'] = tenantId;
+            // Add tenant ID from JWT to the user detail if it's missing
+            if (userDetail.tenantId == null && tenantId != null) {
+              return userDetail.copyWith(tenantId: tenantId);
+            }
             return userDetail;
           }
         } else {
@@ -50,8 +53,7 @@ class UserService {
   }
 
   // Fetch user details from API using user ID
-  static Future<Map<String, dynamic>?> getUserDetailFromUserId(
-      String userId) async {
+  static Future<User?> getUserDetailFromUserId(String userId) async {
     try {
       print('=== API CALL START ===');
       print('Fetching user detail from API for user ID: $userId');
@@ -93,17 +95,16 @@ class UserService {
           final userData = responseData['data'];
           print('Extracted user data: $userData');
 
-          // Return standardized user detail format
-          return {
+          // Create User object from API response (snake_case)
+          return User.fromJson({
             'id': userData['id'] ?? userId,
-            'firstName': userData['first_name'] ?? '',
-            'lastName': userData['last_name'] ?? '',
+            'first_name': userData['first_name'] ?? '',
+            'last_name': userData['last_name'] ?? '',
             'email': userData['email'] ?? '',
-            'profileImage': null, // API doesn't have profile image field
-            'fullName':
-                '${userData['first_name'] ?? ''} ${userData['last_name'] ?? ''}'
-                    .trim(),
-          };
+            'profile_image':
+                userData['profile_image'], // API might have this field
+            'tenant_id': null, // Will be set by caller if needed
+          });
         } else {
           print('ERROR: No data field in API response');
           return null;

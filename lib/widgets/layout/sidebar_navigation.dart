@@ -3,6 +3,7 @@ import '../../services/auth_service.dart';
 import '../../services/user_service.dart';
 import '../../screens/auth/auth_loading_screen.dart';
 import '../../controllers/navigation_controller.dart';
+import '../../models/user.dart';
 
 class SidebarNavigation extends StatefulWidget {
   final NavigationController navigationController;
@@ -23,7 +24,7 @@ class _SidebarNavigationState extends State<SidebarNavigation>
   bool _isCrmExpanded = false;
   bool _isGtmExpanded = false;
   bool _isSalesExpanded = false;
-  Map<String, dynamic>? _currentUser;
+  User? _currentUser;
 
   late AnimationController _crmAnimationController;
   late AnimationController _gtmAnimationController;
@@ -274,7 +275,7 @@ class _SidebarNavigationState extends State<SidebarNavigation>
     try {
       final result = await AuthService.logout();
 
-      if (result.success && mounted) {
+      if (mounted) {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const AuthLoadingScreen()),
@@ -439,20 +440,17 @@ class _SidebarNavigationState extends State<SidebarNavigation>
                       CircleAvatar(
                         radius: 20,
                         backgroundColor: Colors.blue,
-                        child: _currentUser?['profileImage'] != null
+                        child: _currentUser?.hasProfileImage == true
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(20),
                                 child: Image.network(
-                                  _currentUser!['profileImage'],
+                                  _currentUser!.profileImage!,
                                   width: 40,
                                   height: 40,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) {
                                     return Text(
-                                      UserService.getInitials(
-                                        _currentUser?['firstName'] ?? 'U',
-                                        _currentUser?['lastName'],
-                                      ),
+                                      _currentUser?.initials ?? 'U',
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.w600,
@@ -463,10 +461,7 @@ class _SidebarNavigationState extends State<SidebarNavigation>
                                 ),
                               )
                             : Text(
-                                UserService.getInitials(
-                                  _currentUser?['firstName'] ?? 'U',
-                                  _currentUser?['lastName'],
-                                ),
+                                _currentUser?.initials ?? 'U',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
@@ -481,11 +476,10 @@ class _SidebarNavigationState extends State<SidebarNavigation>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              _currentUser?['fullName']?.isNotEmpty == true
-                                  ? _currentUser!['fullName']
+                              _currentUser?.fullName.isNotEmpty == true
+                                  ? _currentUser!.fullName
                                   : _currentUser != null
-                                      ? '${_currentUser!['firstName'] ?? ''} ${_currentUser!['lastName'] ?? ''}'
-                                          .trim()
+                                      ? _currentUser!.fullName
                                       : 'Loading...',
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
@@ -496,7 +490,7 @@ class _SidebarNavigationState extends State<SidebarNavigation>
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              _currentUser?['email'] ?? 'Loading...',
+                              _currentUser?.email ?? 'Loading...',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey[600],

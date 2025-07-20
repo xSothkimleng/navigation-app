@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../controllers/navigation_controller.dart';
 import '../widgets/layout/sidebar_navigation.dart';
+import 'crm/create_company_screen.dart';
+import 'crm/create_contact_screen.dart';
+import 'sales/create_opportunity_screen.dart';
 
 class MainAppLayout extends StatefulWidget {
   const MainAppLayout({Key? key}) : super(key: key);
@@ -80,7 +83,7 @@ class _MainAppLayoutState extends State<MainAppLayout>
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: Colors.white,
         body: SafeArea(
           child: Stack(
             children: [
@@ -104,10 +107,15 @@ class _MainAppLayoutState extends State<MainAppLayout>
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Row(
                       children: [
-                        // Hamburger menu
-                        IconButton(
-                          icon: const Icon(Icons.menu),
-                          onPressed: _toggleDrawer,
+                        // Left side - Hamburger menu or back button
+                        AnimatedBuilder(
+                          animation: _navigationController,
+                          builder: (context, child) {
+                            return IconButton(
+                              icon: const Icon(Icons.menu),
+                              onPressed: _toggleDrawer,
+                            );
+                          },
                         ),
                         // Page title (centered)
                         Expanded(
@@ -128,15 +136,29 @@ class _MainAppLayoutState extends State<MainAppLayout>
                             ),
                           ),
                         ),
-                        // Right side - balance the hamburger icon
-                        const SizedBox(width: 48),
+                        // Right side - Add button or balance space
+                        AnimatedBuilder(
+                          animation: _navigationController,
+                          builder: (context, child) {
+                            final route = _navigationController.currentRoute;
+                            if (_shouldShowAddButton(route)) {
+                              return IconButton(
+                                icon: const Icon(Icons.add),
+                                onPressed: () => _handleAddAction(route),
+                              );
+                            } else {
+                              return const SizedBox(width: 48);
+                            }
+                          },
+                        ),
                       ],
                     ),
                   ),
                   // Main content
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.all(24),
+                      padding:
+                          const EdgeInsets.only(left: 24, top: 24, right: 24),
                       child: AnimatedBuilder(
                         animation: _navigationController,
                         builder: (context, child) {
@@ -213,6 +235,67 @@ class _MainAppLayoutState extends State<MainAppLayout>
         return 'Proposals';
       default:
         return 'Dashboard';
+    }
+  }
+
+  bool _shouldShowAddButton(String route) {
+    return route == '/crm/companies' ||
+        route == '/crm/contacts' ||
+        route == '/sales/opportunities';
+  }
+
+  void _handleAddAction(String route) {
+    if (route == '/crm/companies') {
+      // Use proper navigation stack for create company screen
+      Navigator.of(context)
+          .push(
+        MaterialPageRoute(
+          builder: (context) => CreateCompanyScreen(
+            onCompanyCreated: () {
+              // Call the refresh method through the navigation controller
+              _navigationController.refreshCompanies();
+            },
+          ),
+        ),
+      )
+          .then((result) {
+        // The refresh is now handled by the callback
+        // No need to do anything here unless you want additional logic
+      });
+    } else if (route == '/crm/contacts') {
+      // Use proper navigation stack for create contact screen
+      Navigator.of(context)
+          .push(
+        MaterialPageRoute(
+          builder: (context) => CreateContactScreen(
+            onContactCreated: () {
+              // Call the refresh method through the navigation controller
+              _navigationController.refreshContacts();
+            },
+          ),
+        ),
+      )
+          .then((result) {
+        // The refresh is now handled by the callback
+        // No need to do anything here unless you want additional logic
+      });
+    } else if (route == '/sales/opportunities') {
+      // Use proper navigation stack for create opportunity screen
+      Navigator.of(context)
+          .push(
+        MaterialPageRoute(
+          builder: (context) => CreateOpportunityScreen(
+            onOpportunityCreated: () {
+              // Call the refresh method through the navigation controller
+              _navigationController.refreshOpportunities();
+            },
+          ),
+        ),
+      )
+          .then((result) {
+        // The refresh is now handled by the callback
+        // No need to do anything here unless you want additional logic
+      });
     }
   }
 }
