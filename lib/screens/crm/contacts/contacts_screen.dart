@@ -14,8 +14,10 @@ class ContactsScreen extends StatefulWidget {
 
 class _ContactsScreenState extends State<ContactsScreen> {
   List<Contact> _contacts = [];
+  List<Contact> _filteredContacts = [];
   bool _isLoading = true;
   String? _errorMessage;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -27,6 +29,12 @@ class _ContactsScreenState extends State<ContactsScreen> {
     }
 
     _loadContacts();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   // Public method to refresh contacts from external calls
@@ -46,9 +54,11 @@ class _ContactsScreenState extends State<ContactsScreen> {
       setState(() {
         if (apiResponse.data != null) {
           _contacts = apiResponse.data!;
+          _filteredContacts = apiResponse.data!;
           _errorMessage = null;
         } else {
           _contacts = [];
+          _filteredContacts = [];
           _errorMessage = apiResponse.message;
         }
         _isLoading = false;
@@ -58,8 +68,23 @@ class _ContactsScreenState extends State<ContactsScreen> {
         _errorMessage = 'An error occurred: ${e.toString()}';
         _isLoading = false;
         _contacts = [];
+        _filteredContacts = [];
       });
     }
+  }
+
+  void _filterContacts(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _filteredContacts = _contacts;
+      } else {
+        _filteredContacts = _contacts
+            .where((contact) => '${contact.firstName} ${contact.lastName}'
+                .toLowerCase()
+                .contains(query.toLowerCase()))
+            .toList();
+      }
+    });
   }
 
   @override
@@ -73,7 +98,9 @@ class _ContactsScreenState extends State<ContactsScreen> {
   Widget _buildBody() {
     if (_isLoading) {
       return const Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(
+          color: Colors.blue,
+        ),
       );
     }
 
@@ -108,6 +135,69 @@ class _ContactsScreenState extends State<ContactsScreen> {
       );
     }
 
+    if (_filteredContacts.isEmpty && _contacts.isNotEmpty) {
+      return Column(
+        children: [
+          // Search bar
+          Padding(
+            padding: const EdgeInsets.all(0),
+            child: TextField(
+              controller: _searchController,
+              onChanged: _filterContacts,
+              decoration: InputDecoration(
+                hintText: 'Search contacts...',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          _filterContacts('');
+                        },
+                      )
+                    : null,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: Colors.blue),
+                ),
+              ),
+            ),
+          ),
+          // Empty search results
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.search_off,
+                    size: 64,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'No contacts match your search',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
     if (_contacts.isEmpty) {
       return const Center(
         child: Column(
@@ -131,18 +221,58 @@ class _ContactsScreenState extends State<ContactsScreen> {
       );
     }
 
-    return RefreshIndicator(
-      onRefresh: _loadContacts,
-      color: Colors.blue,
-      backgroundColor: Colors.white,
-      child: ListView.builder(
-        padding: const EdgeInsets.all(8),
-        itemCount: _contacts.length,
-        itemBuilder: (context, index) {
-          final contact = _contacts[index];
-          return _buildContactCard(contact);
-        },
-      ),
+    return Column(
+      children: [
+        // Search bar
+        Padding(
+          padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 16),
+          child: TextField(
+            controller: _searchController,
+            onChanged: _filterContacts,
+            decoration: InputDecoration(
+              hintText: 'Search contacts...',
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: _searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        _searchController.clear();
+                        _filterContacts('');
+                      },
+                    )
+                  : null,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey[300]!),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey[300]!),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.blue),
+              ),
+            ),
+          ),
+        ),
+        // List
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: _loadContacts,
+            color: Colors.blue,
+            backgroundColor: Colors.white,
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              itemCount: _filteredContacts.length,
+              itemBuilder: (context, index) {
+                final contact = _filteredContacts[index];
+                return _buildContactCard(contact);
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 

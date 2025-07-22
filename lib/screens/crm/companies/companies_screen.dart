@@ -15,8 +15,10 @@ class CompaniesScreen extends StatefulWidget {
 
 class _CompaniesScreenState extends State<CompaniesScreen> {
   List<Company> _companies = [];
+  List<Company> _filteredCompanies = [];
   bool _isLoading = true;
   String? _errorMessage;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -29,6 +31,12 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
     }
 
     _loadCompanies();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   // Public method to refresh companies from external calls
@@ -48,9 +56,11 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
       setState(() {
         if (apiResponse.data != null) {
           _companies = apiResponse.data!;
+          _filteredCompanies = apiResponse.data!;
           _errorMessage = null;
         } else {
           _companies = [];
+          _filteredCompanies = [];
           _errorMessage = apiResponse.message;
         }
         _isLoading = false;
@@ -60,8 +70,22 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
         _errorMessage = 'An error occurred: ${e.toString()}';
         _isLoading = false;
         _companies = [];
+        _filteredCompanies = [];
       });
     }
+  }
+
+  void _filterCompanies(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _filteredCompanies = _companies;
+      } else {
+        _filteredCompanies = _companies
+            .where((company) =>
+                company.name.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+    });
   }
 
   @override
@@ -75,7 +99,9 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
   Widget _buildBody() {
     if (_isLoading) {
       return const Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(
+          color: Colors.blue,
+        ),
       );
     }
 
@@ -110,6 +136,69 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
       );
     }
 
+    if (_filteredCompanies.isEmpty && _companies.isNotEmpty) {
+      return Column(
+        children: [
+          // Search bar
+          Padding(
+            padding: const EdgeInsets.all(0),
+            child: TextField(
+              controller: _searchController,
+              onChanged: _filterCompanies,
+              decoration: InputDecoration(
+                hintText: 'Search companies...',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          _filterCompanies('');
+                        },
+                      )
+                    : null,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: Colors.blue),
+                ),
+              ),
+            ),
+          ),
+          // Empty search results
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.search_off,
+                    size: 64,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'No companies match your search',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
     if (_companies.isEmpty) {
       return const Center(
         child: Column(
@@ -133,18 +222,58 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
       );
     }
 
-    return RefreshIndicator(
-      onRefresh: _loadCompanies,
-      color: Colors.blue,
-      backgroundColor: Colors.white,
-      child: ListView.builder(
-        padding: const EdgeInsets.all(8),
-        itemCount: _companies.length,
-        itemBuilder: (context, index) {
-          final company = _companies[index];
-          return _buildCompanyCard(company);
-        },
-      ),
+    return Column(
+      children: [
+        // Search bar
+        Padding(
+          padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 16),
+          child: TextField(
+            controller: _searchController,
+            onChanged: _filterCompanies,
+            decoration: InputDecoration(
+              hintText: 'Search companies...',
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: _searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        _searchController.clear();
+                        _filterCompanies('');
+                      },
+                    )
+                  : null,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey[300]!),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey[300]!),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.blue),
+              ),
+            ),
+          ),
+        ),
+        // List
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: _loadCompanies,
+            color: Colors.blue,
+            backgroundColor: Colors.white,
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              itemCount: _filteredCompanies.length,
+              itemBuilder: (context, index) {
+                final company = _filteredCompanies[index];
+                return _buildCompanyCard(company);
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 

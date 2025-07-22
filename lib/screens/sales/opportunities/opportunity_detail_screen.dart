@@ -395,21 +395,15 @@ class _OpportunityDetailScreenState extends State<OpportunityDetailScreen> {
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                   // Page title (centered)
-                  Expanded(
+                  const Expanded(
                     child: Center(
                       child: Text(
-                        _isLoading
-                            ? 'Opportunity Details'
-                            : (_opportunity?.name != null &&
-                                    _opportunity!.name.isNotEmpty
-                                ? _opportunity!.name
-                                : 'Opportunity Details'),
-                        style: const TextStyle(
+                        'Opportunity Details',
+                        style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                           color: Colors.black87,
                         ),
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
@@ -487,7 +481,7 @@ class _OpportunityDetailScreenState extends State<OpportunityDetailScreen> {
 
     return SingleChildScrollView(
       padding: const EdgeInsets.only(
-          left: 32.0, right: 32.0, bottom: 32.0, top: 16.0),
+          left: 32.0, right: 32.0, bottom: 32.0, top: 32.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -810,43 +804,13 @@ class _OpportunityDetailScreenState extends State<OpportunityDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Text(
-              'Activities',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
-            const Spacer(),
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: IconButton(
-                icon: Icon(
-                  Icons.filter_list,
-                  size: 18,
-                  color: Colors.grey[600],
-                ),
-                padding: EdgeInsets.zero,
-                onPressed: () {
-                  // TODO: Implement activity filtering
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                          'Activity filtering will be implemented when activities API is ready'),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
+        Text(
+          'Activities',
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
         ),
         const SizedBox(height: 20),
         // Sample activity items

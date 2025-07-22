@@ -17,8 +17,10 @@ class OpportunitiesScreen extends StatefulWidget {
 
 class _OpportunitiesScreenState extends State<OpportunitiesScreen> {
   List<Opportunity> _opportunities = [];
+  List<Opportunity> _filteredOpportunities = [];
   bool _isLoading = true;
   String? _errorMessage;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -31,6 +33,12 @@ class _OpportunitiesScreenState extends State<OpportunitiesScreen> {
     }
 
     _loadOpportunities();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   // Public method to refresh opportunities from external calls
@@ -50,9 +58,11 @@ class _OpportunitiesScreenState extends State<OpportunitiesScreen> {
       setState(() {
         if (apiResponse.data != null) {
           _opportunities = apiResponse.data!;
+          _filteredOpportunities = apiResponse.data!;
           _errorMessage = null;
         } else {
           _opportunities = [];
+          _filteredOpportunities = [];
           _errorMessage = apiResponse.message;
         }
         _isLoading = false;
@@ -62,8 +72,22 @@ class _OpportunitiesScreenState extends State<OpportunitiesScreen> {
         _errorMessage = 'An error occurred: ${e.toString()}';
         _isLoading = false;
         _opportunities = [];
+        _filteredOpportunities = [];
       });
     }
+  }
+
+  void _filterOpportunities(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _filteredOpportunities = _opportunities;
+      } else {
+        _filteredOpportunities = _opportunities
+            .where((opportunity) =>
+                opportunity.name.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+    });
   }
 
   @override
@@ -77,7 +101,9 @@ class _OpportunitiesScreenState extends State<OpportunitiesScreen> {
   Widget _buildBody() {
     if (_isLoading) {
       return const Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(
+          color: Colors.blue,
+        ),
       );
     }
 
@@ -112,6 +138,69 @@ class _OpportunitiesScreenState extends State<OpportunitiesScreen> {
       );
     }
 
+    if (_filteredOpportunities.isEmpty && _opportunities.isNotEmpty) {
+      return Column(
+        children: [
+          // Search bar
+          Padding(
+            padding: const EdgeInsets.all(0),
+            child: TextField(
+              controller: _searchController,
+              onChanged: _filterOpportunities,
+              decoration: InputDecoration(
+                hintText: 'Search opportunities...',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          _filterOpportunities('');
+                        },
+                      )
+                    : null,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: Colors.blue),
+                ),
+              ),
+            ),
+          ),
+          // Empty search results
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.search_off,
+                    size: 64,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'No opportunities match your search',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
     if (_opportunities.isEmpty) {
       return const Center(
         child: Column(
@@ -135,18 +224,58 @@ class _OpportunitiesScreenState extends State<OpportunitiesScreen> {
       );
     }
 
-    return RefreshIndicator(
-      onRefresh: _loadOpportunities,
-      color: Colors.blue,
-      backgroundColor: Colors.white,
-      child: ListView.builder(
-        padding: const EdgeInsets.all(8),
-        itemCount: _opportunities.length,
-        itemBuilder: (context, index) {
-          final opportunity = _opportunities[index];
-          return _buildOpportunityCard(opportunity);
-        },
-      ),
+    return Column(
+      children: [
+        // Search bar
+        Padding(
+          padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 16),
+          child: TextField(
+            controller: _searchController,
+            onChanged: _filterOpportunities,
+            decoration: InputDecoration(
+              hintText: 'Search opportunities...',
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: _searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        _searchController.clear();
+                        _filterOpportunities('');
+                      },
+                    )
+                  : null,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey[300]!),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey[300]!),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.blue),
+              ),
+            ),
+          ),
+        ),
+        // List
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: _loadOpportunities,
+            color: Colors.blue,
+            backgroundColor: Colors.white,
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              itemCount: _filteredOpportunities.length,
+              itemBuilder: (context, index) {
+                final opportunity = _filteredOpportunities[index];
+                return _buildOpportunityCard(opportunity);
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -275,7 +404,7 @@ class _OpportunitiesScreenState extends State<OpportunitiesScreen> {
               if (opportunity.contact.firstName.isNotEmpty)
                 _buildInfoRow(
                   Icons.person_outlined,
-                  '${opportunity.contact!.firstName} ${opportunity.contact!.lastName}',
+                  '${opportunity.contact.firstName} ${opportunity.contact.lastName}',
                 ),
 
               // Territory
