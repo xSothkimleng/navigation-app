@@ -42,7 +42,7 @@ class _CreateOpportunityScreenState extends State<CreateOpportunityScreen> {
   TerritoryInfo? _selectedTerritory;
   Company? _selectedCompany;
   Contact? _selectedContact;
-  DateTime? _selectedEstimatedCloseDate;
+  DateTime? _selectedEstimateCloseDate;
   DateTime? _selectedActualCloseDate;
 
   bool _isLoadingStages = true;
@@ -251,7 +251,7 @@ class _CreateOpportunityScreenState extends State<CreateOpportunityScreen> {
         isActive: _isActive,
         locationOverride:
             location != null ? GeoLocation.fromGeoPoint(location) : null,
-        estimatedCloseDate: _selectedEstimatedCloseDate,
+        estimateCloseDate: _selectedEstimateCloseDate,
         actualCloseDate: _selectedActualCloseDate,
       );
 
@@ -716,12 +716,12 @@ class _CreateOpportunityScreenState extends State<CreateOpportunityScreen> {
                               ),
                         const SizedBox(height: 16),
 
-                        // Estimated Close Date
+                        // Estimate Close Date
                         InkWell(
                           onTap: () => _selectDate(),
                           child: InputDecorator(
                             decoration: InputDecoration(
-                              labelText: 'Estimated Close Date',
+                              labelText: 'Estimate Close Date',
                               border: const OutlineInputBorder(),
                               focusedBorder: const OutlineInputBorder(
                                 borderSide:
@@ -733,24 +733,24 @@ class _CreateOpportunityScreenState extends State<CreateOpportunityScreen> {
                               ),
                               labelStyle: const TextStyle(color: Colors.grey),
                               floatingLabelStyle: TextStyle(
-                                color: _selectedEstimatedCloseDate != null
+                                color: _selectedEstimateCloseDate != null
                                     ? Colors.blue
                                     : Colors.grey,
                               ),
                               prefixIcon: Icon(
                                 Icons.calendar_today,
-                                color: _selectedEstimatedCloseDate != null
+                                color: _selectedEstimateCloseDate != null
                                     ? Colors.blue
                                     : Colors.grey,
                               ),
                             ),
                             child: Text(
-                              _selectedEstimatedCloseDate != null
+                              _selectedEstimateCloseDate != null
                                   ? DateFormat('MMM dd, yyyy')
-                                      .format(_selectedEstimatedCloseDate!)
+                                      .format(_selectedEstimateCloseDate!)
                                   : 'Select date (optional)',
                               style: TextStyle(
-                                color: _selectedEstimatedCloseDate != null
+                                color: _selectedEstimateCloseDate != null
                                     ? Colors.black87
                                     : Colors.grey[600],
                               ),
@@ -928,7 +928,7 @@ class _CreateOpportunityScreenState extends State<CreateOpportunityScreen> {
   Future<void> _selectDate() async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _selectedEstimatedCloseDate ?? DateTime.now(),
+      initialDate: _selectedEstimateCloseDate ?? DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365 * 5)),
       builder: (BuildContext context, Widget? child) {
@@ -946,9 +946,9 @@ class _CreateOpportunityScreenState extends State<CreateOpportunityScreen> {
         );
       },
     );
-    if (picked != null && picked != _selectedEstimatedCloseDate) {
+    if (picked != null && picked != _selectedEstimateCloseDate) {
       setState(() {
-        _selectedEstimatedCloseDate = picked;
+        _selectedEstimateCloseDate = picked;
       });
     }
   }

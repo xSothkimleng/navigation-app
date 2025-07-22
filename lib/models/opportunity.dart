@@ -11,7 +11,7 @@ class Opportunity extends IModel {
   final TerritoryInfo territory;
   final double amount;
   final GeoPoint? locationOverride;
-  final DateTime? estimatedCloseDate;
+  final DateTime? estimateCloseDate;
   final DateTime? actualCloseDate;
 
   Opportunity({
@@ -26,7 +26,7 @@ class Opportunity extends IModel {
     required this.contact,
     required this.territory,
     this.locationOverride,
-    this.estimatedCloseDate,
+    this.estimateCloseDate,
     this.actualCloseDate,
   });
 
@@ -58,8 +58,8 @@ class Opportunity extends IModel {
                     ]
                   : null)
           : null,
-      estimatedCloseDate: json['estimated_close_date'] != null
-          ? DateTime.tryParse(json['estimated_close_date'].toString())
+      estimateCloseDate: json['estimate_close_date'] != null
+          ? DateTime.tryParse(json['estimate_close_date'].toString())
           : null,
       actualCloseDate: json['actual_close_date'] != null
           ? DateTime.tryParse(json['actual_close_date'].toString())
@@ -78,7 +78,7 @@ class Opportunity extends IModel {
       'contact_override': contact.id,
       'amount_override': amount,
       'location_override': locationOverride,
-      'estimated_close_date': estimatedCloseDate?.toIso8601String(),
+      'estimate_close_date': estimateCloseDate?.toIso8601String(),
       'actual_close_date': actualCloseDate?.toIso8601String(),
     };
   }
@@ -150,7 +150,7 @@ class OpportunityInput {
   final String? contactId;
   final String? territoryId;
   final GeoLocation? locationOverride;
-  final DateTime? estimatedCloseDate;
+  final DateTime? estimateCloseDate;
   final DateTime? actualCloseDate;
   final double? value;
   final String? description;
@@ -165,7 +165,7 @@ class OpportunityInput {
     this.contactId,
     this.territoryId,
     this.locationOverride,
-    this.estimatedCloseDate,
+    this.estimateCloseDate,
     this.actualCloseDate,
     this.value,
     this.description,
@@ -185,8 +185,8 @@ class OpportunityInput {
           ? GeoLocation.fromGeoPoint(
               List<double>.from(json['location_override']))
           : null,
-      estimatedCloseDate: json['estimated_close_date'] != null
-          ? DateTime.tryParse(json['estimated_close_date'].toString())
+      estimateCloseDate: json['estimate_close_date'] != null
+          ? DateTime.tryParse(json['estimate_close_date'].toString())
           : null,
       actualCloseDate: json['actual_close_date'] != null
           ? DateTime.tryParse(json['actual_close_date'].toString())
@@ -211,13 +211,13 @@ class OpportunityInput {
     if (locationOverride != null) {
       data['location_override'] = locationOverride!.toJson();
     }
-    if (estimatedCloseDate != null) {
+    if (estimateCloseDate != null) {
       // Ensure the date is in UTC and has proper timezone info
-      String dateStr = estimatedCloseDate!.toUtc().toIso8601String();
+      String dateStr = estimateCloseDate!.toUtc().toIso8601String();
       if (!dateStr.endsWith('Z')) {
         dateStr = dateStr + 'Z';
       }
-      data['estimated_close_date'] = dateStr;
+      data['estimate_close_date'] = dateStr;
     }
     if (actualCloseDate != null) {
       // Ensure the date is in UTC and has proper timezone info

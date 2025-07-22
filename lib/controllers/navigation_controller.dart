@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import '../screens/dashboard/dashboard_screen.dart';
-import '../screens/crm/contacts_screen.dart';
-import '../screens/crm/companies_screen.dart';
+import '../screens/crm/contacts/contacts_screen.dart';
+import '../screens/crm/companies/companies_screen.dart';
 import '../screens/crm/suppliers_screen.dart';
 import '../screens/crm/products_screen.dart';
 import '../screens/gtm/quota_planning_screen.dart';
 import '../screens/gtm/sales_forecast_screen.dart';
 import '../screens/gtm/profit_loss_screen.dart';
-import '../screens/sales/opportunities_screen.dart';
+import '../screens/sales/opportunities/opportunities_screen.dart';
 import '../screens/sales/activity_planner_screen.dart';
 import '../screens/sales/invoices_screen.dart';
 import '../screens/sales/proposals_screen.dart';
+import '../routes/app_routes.dart';
 
 class NavigationController extends ChangeNotifier {
-  String _currentRoute = '/dashboard';
+  String _currentRoute = AppRoutes.dashboard;
   Widget _currentScreen = const DashboardScreen();
   VoidCallback? _companiesRefreshCallback;
   VoidCallback? _contactsRefreshCallback;
@@ -52,51 +53,65 @@ class NavigationController extends ChangeNotifier {
     }
   }
 
+  void refreshCurrentScreen() {
+    switch (_currentRoute) {
+      case AppRoutes.companies:
+        refreshCompanies();
+        break;
+      case AppRoutes.contacts:
+        refreshContacts();
+        break;
+      case AppRoutes.opportunities:
+        refreshOpportunities();
+        break;
+    }
+  }
+
   void navigateTo(String route) {
     if (_currentRoute == route) return;
 
     _currentRoute = route;
 
     switch (route) {
-      case '/dashboard':
+      case AppRoutes.dashboard:
         _currentScreen = const DashboardScreen();
         break;
-      case '/crm/contacts':
+      case AppRoutes.contacts:
         _currentScreen = ContactsScreen(navigationController: this);
         break;
-      case '/crm/companies':
+      case AppRoutes.companies:
         _currentScreen = CompaniesScreen(navigationController: this);
         break;
-      case '/crm/suppliers':
+      case AppRoutes.suppliers:
         _currentScreen = const SuppliersScreen();
         break;
-      case '/crm/products':
+      case AppRoutes.products:
         _currentScreen = const ProductsScreen();
         break;
-      case '/gtm/quota-planning':
+      case AppRoutes.quotaPlanning:
         _currentScreen = const QuotaPlanningScreen();
         break;
-      case '/gtm/sales-forecast':
+      case AppRoutes.salesForecast:
         _currentScreen = const SalesForecastScreen();
         break;
-      case '/gtm/profit-loss':
+      case AppRoutes.profitLoss:
         _currentScreen = const ProfitLossScreen();
         break;
-      case '/sales/opportunities':
+      case AppRoutes.opportunities:
         _currentScreen = OpportunitiesScreen(navigationController: this);
         break;
-      case '/sales/activity-planner':
+      case AppRoutes.activityPlanner:
         _currentScreen = const ActivityPlannerScreen();
         break;
-      case '/sales/invoices':
+      case AppRoutes.invoices:
         _currentScreen = const InvoicesScreen();
         break;
-      case '/sales/proposals':
+      case AppRoutes.proposals:
         _currentScreen = const ProposalsScreen();
         break;
       default:
         _currentScreen = const DashboardScreen();
-        _currentRoute = '/dashboard';
+        _currentRoute = AppRoutes.dashboard;
     }
 
     notifyListeners();

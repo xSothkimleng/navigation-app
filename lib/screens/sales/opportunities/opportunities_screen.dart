@@ -2,6 +2,7 @@
 import 'package:salesquake_app/models/opportunity.dart';
 import 'package:salesquake_app/services/opportunity_service.dart';
 import 'package:salesquake_app/controllers/navigation_controller.dart';
+import 'package:salesquake_app/routes/app_routes.dart';
 import 'package:intl/intl.dart';
 
 class OpportunitiesScreen extends StatefulWidget {
@@ -152,136 +153,147 @@ class _OpportunitiesScreenState extends State<OpportunitiesScreen> {
   Widget _buildOpportunityCard(Opportunity opportunity) {
     final currencyFormatter = NumberFormat.currency(symbol: '\$');
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      elevation: 0,
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-          color: Color(0xFFC5C6CC),
-          width: 1,
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          AppRoutes.opportunityDetail,
+          arguments: opportunity.id,
+        );
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Card(
+        margin: const EdgeInsets.only(bottom: 16),
+        elevation: 0,
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: Color(0xFFC5C6CC),
+            width: 1,
+          ),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header with opportunity name and status
-            Row(
-              children: [
-                // Opportunity avatar
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: Colors.green[100],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    Icons.business_center,
-                    color: Colors.green[600],
-                    size: 24,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        opportunity.name,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.business_outlined,
-                            size: 16,
-                            color: Colors.grey[600],
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              opportunity.company.name,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: opportunity.isActive
-                        ? const Color(0xFFEAF2FF)
-                        : Colors.grey[100],
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    opportunity.isActive ? 'ACTIVE' : 'INACTIVE',
-                    style: TextStyle(
-                      color: opportunity.isActive
-                          ? const Color(0xFF006FFD)
-                          : Colors.grey[600],
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header with opportunity name and status
+              Row(
+                children: [
+                  // Opportunity avatar
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: Colors.green[100],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.business_center,
+                      color: Colors.green[600],
+                      size: 24,
                     ),
                   ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          opportunity.name,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.business_outlined,
+                              size: 16,
+                              color: Colors.grey[600],
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                opportunity.company.name,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: opportunity.isActive
+                          ? const Color(0xFFEAF2FF)
+                          : Colors.grey[100],
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      opportunity.isActive ? 'ACTIVE' : 'INACTIVE',
+                      style: TextStyle(
+                        color: opportunity.isActive
+                            ? const Color(0xFF006FFD)
+                            : Colors.grey[600],
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 16),
+
+              // Amount
+              _buildInfoRow(
+                Icons.attach_money,
+                currencyFormatter.format(opportunity.amount),
+              ),
+
+              // Stage
+              _buildInfoRow(
+                Icons.timeline,
+                '${opportunity.stage.name} (${opportunity.stage.percentage}%)',
+              ),
+
+              // Contact
+              if (opportunity.contact.firstName.isNotEmpty)
+                _buildInfoRow(
+                  Icons.person_outlined,
+                  '${opportunity.contact!.firstName} ${opportunity.contact!.lastName}',
                 ),
-              ],
-            ),
 
-            const SizedBox(height: 16),
+              // Territory
+              if (opportunity.territory.name.isNotEmpty)
+                _buildInfoRow(
+                  Icons.map,
+                  opportunity.territory.name,
+                ),
 
-            // Amount
-            _buildInfoRow(
-              Icons.attach_money,
-              currencyFormatter.format(opportunity.amount),
-            ),
-
-            // Stage
-            _buildInfoRow(
-              Icons.timeline,
-              '${opportunity.stage.name} (${opportunity.stage.percentage}%)',
-            ),
-
-            // Contact
-            _buildInfoRow(
-              Icons.person_outlined,
-              '${opportunity.contact.firstName} ${opportunity.contact.lastName}',
-            ),
-
-            // Territory
-            if (opportunity.territory.name.isNotEmpty)
-              _buildInfoRow(
-                Icons.place_outlined,
-                opportunity.territory.name,
-              ),
-
-            // Estimated close date
-            if (opportunity.estimatedCloseDate != null)
-              _buildInfoRow(
-                Icons.calendar_today_outlined,
-                DateFormat('MMM dd, yyyy')
-                    .format(opportunity.estimatedCloseDate!),
-              ),
-          ],
+              // Estimate close date
+              if (opportunity.estimateCloseDate != null)
+                _buildInfoRow(
+                  Icons.calendar_today_outlined,
+                  DateFormat('MMM dd, yyyy')
+                      .format(opportunity.estimateCloseDate!),
+                ),
+            ],
+          ),
         ),
       ),
     );

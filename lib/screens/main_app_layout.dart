@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../controllers/navigation_controller.dart';
 import '../widgets/layout/sidebar_navigation.dart';
-import 'crm/create_company_screen.dart';
-import 'crm/create_contact_screen.dart';
-import 'sales/create_opportunity_screen.dart';
+import '../routes/app_routes.dart';
 
 class MainAppLayout extends StatefulWidget {
   const MainAppLayout({Key? key}) : super(key: key);
@@ -208,93 +206,19 @@ class _MainAppLayoutState extends State<MainAppLayout>
   }
 
   String _getPageTitle(String route) {
-    switch (route) {
-      case '/dashboard':
-        return 'Dashboard';
-      case '/crm/contacts':
-        return 'Contacts';
-      case '/crm/companies':
-        return 'Companies';
-      case '/crm/suppliers':
-        return 'Suppliers';
-      case '/crm/products':
-        return 'Products';
-      case '/gtm/quota-planning':
-        return 'Quota Planning';
-      case '/gtm/sales-forecast':
-        return 'Sales Forecast';
-      case '/gtm/profit-loss':
-        return 'Profit & Loss';
-      case '/sales/opportunities':
-        return 'Opportunities';
-      case '/sales/activity-planner':
-        return 'Activity Planner';
-      case '/sales/invoices':
-        return 'Invoices';
-      case '/sales/proposals':
-        return 'Proposals';
-      default:
-        return 'Dashboard';
-    }
+    return AppRoutes.routeTitles[route] ?? 'Dashboard';
   }
 
   bool _shouldShowAddButton(String route) {
-    return route == '/crm/companies' ||
-        route == '/crm/contacts' ||
-        route == '/sales/opportunities';
+    return AppRoutes.routesWithAddButton.contains(route);
   }
 
   void _handleAddAction(String route) {
-    if (route == '/crm/companies') {
-      // Use proper navigation stack for create company screen
-      Navigator.of(context)
-          .push(
-        MaterialPageRoute(
-          builder: (context) => CreateCompanyScreen(
-            onCompanyCreated: () {
-              // Call the refresh method through the navigation controller
-              _navigationController.refreshCompanies();
-            },
-          ),
-        ),
-      )
-          .then((result) {
-        // The refresh is now handled by the callback
-        // No need to do anything here unless you want additional logic
-      });
-    } else if (route == '/crm/contacts') {
-      // Use proper navigation stack for create contact screen
-      Navigator.of(context)
-          .push(
-        MaterialPageRoute(
-          builder: (context) => CreateContactScreen(
-            onContactCreated: () {
-              // Call the refresh method through the navigation controller
-              _navigationController.refreshContacts();
-            },
-          ),
-        ),
-      )
-          .then((result) {
-        // The refresh is now handled by the callback
-        // No need to do anything here unless you want additional logic
-      });
-    } else if (route == '/sales/opportunities') {
-      // Use proper navigation stack for create opportunity screen
-      Navigator.of(context)
-          .push(
-        MaterialPageRoute(
-          builder: (context) => CreateOpportunityScreen(
-            onOpportunityCreated: () {
-              // Call the refresh method through the navigation controller
-              _navigationController.refreshOpportunities();
-            },
-          ),
-        ),
-      )
-          .then((result) {
-        // The refresh is now handled by the callback
-        // No need to do anything here unless you want additional logic
+    final createRoute = AppRoutes.createRoutes[route];
+    if (createRoute != null) {
+      Navigator.pushNamed(context, createRoute).then((_) {
+        // Auto-refresh current screen
+        _navigationController.refreshCurrentScreen();
       });
     }
   }

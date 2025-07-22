@@ -4,6 +4,7 @@ import '../../services/user_service.dart';
 import '../../screens/auth/auth_loading_screen.dart';
 import '../../controllers/navigation_controller.dart';
 import '../../models/user.dart';
+import '../../routes/app_routes.dart';
 
 class SidebarNavigation extends StatefulWidget {
   final NavigationController navigationController;
@@ -177,7 +178,7 @@ class _SidebarNavigationState extends State<SidebarNavigation>
       icon: Icons.dashboard_outlined,
       selectedIcon: Icons.dashboard,
       label: 'Dashboard',
-      route: '/dashboard',
+      route: AppRoutes.dashboard,
     ),
   ];
 
@@ -191,25 +192,25 @@ class _SidebarNavigationState extends State<SidebarNavigation>
           icon: Icons.person_outline,
           selectedIcon: Icons.person,
           label: 'Contacts',
-          route: '/crm/contacts',
+          route: AppRoutes.contacts,
         ),
         NavigationItem(
           icon: Icons.business_outlined,
           selectedIcon: Icons.business,
           label: 'Companies',
-          route: '/crm/companies',
+          route: AppRoutes.companies,
         ),
         NavigationItem(
           icon: Icons.store_outlined,
           selectedIcon: Icons.store,
           label: 'Suppliers',
-          route: '/crm/suppliers',
+          route: AppRoutes.suppliers,
         ),
         NavigationItem(
           icon: Icons.inventory_2_outlined,
           selectedIcon: Icons.inventory_2,
           label: 'Products',
-          route: '/crm/products',
+          route: AppRoutes.products,
         ),
       ],
     ),
@@ -222,19 +223,19 @@ class _SidebarNavigationState extends State<SidebarNavigation>
           icon: Icons.timeline_outlined,
           selectedIcon: Icons.timeline,
           label: 'Quota planning',
-          route: '/gtm/quota-planning',
+          route: AppRoutes.quotaPlanning,
         ),
         NavigationItem(
           icon: Icons.analytics_outlined,
           selectedIcon: Icons.analytics,
           label: 'Sales forecast',
-          route: '/gtm/sales-forecast',
+          route: AppRoutes.salesForecast,
         ),
         NavigationItem(
           icon: Icons.assessment_outlined,
           selectedIcon: Icons.assessment,
           label: 'Profit & Loss',
-          route: '/gtm/profit-loss',
+          route: AppRoutes.profitLoss,
         ),
       ],
     ),
@@ -247,25 +248,25 @@ class _SidebarNavigationState extends State<SidebarNavigation>
           icon: Icons.business_center_outlined,
           selectedIcon: Icons.business_center,
           label: 'Opportunities',
-          route: '/sales/opportunities',
+          route: AppRoutes.opportunities,
         ),
         NavigationItem(
           icon: Icons.event_note_outlined,
           selectedIcon: Icons.event_note,
           label: 'Activity Planner',
-          route: '/sales/activity-planner',
+          route: AppRoutes.activityPlanner,
         ),
         NavigationItem(
           icon: Icons.receipt_long_outlined,
           selectedIcon: Icons.receipt_long,
           label: 'Invoices',
-          route: '/sales/invoices',
+          route: AppRoutes.invoices,
         ),
         NavigationItem(
           icon: Icons.description_outlined,
           selectedIcon: Icons.description,
           label: 'Proposals',
-          route: '/sales/proposals',
+          route: AppRoutes.proposals,
         ),
       ],
     ),
