@@ -1,15 +1,9 @@
 import 'auth_service.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:salesquake_app/utils/http_client.dart';
 import '../models/user.dart';
 
 class UserService {
-  static String get _baseUrl =>
-      dotenv.env['API_BASE_URL'] ?? 'http://localhost';
-  static String get _port => dotenv.env['API_PORT'] ?? '8080';
-  static String get _apiUrl => '$_baseUrl:$_port/api';
-
   // Get user data from JWT token and fetch full profile from API
   static Future<User?> getCurrentUser() async {
     try {
@@ -58,28 +52,7 @@ class UserService {
       print('=== API CALL START ===');
       print('Fetching user detail from API for user ID: $userId');
 
-      // Get the JWT token to authenticate API request
-      final token = await AuthService.getTokenFromStorage();
-      if (token == null) {
-        print('ERROR: No JWT token available for API request');
-        return null;
-      }
-
-      print('Got JWT token for API request: ${token.substring(0, 50)}...');
-
-      final headers = {
-        'Content-Type': 'application/json',
-        'Cookie': 'jwt=$token',
-      };
-
-      final apiUrl = '$_apiUrl/v1/users/$userId';
-      print('Making API request to: $apiUrl');
-      print('Request headers: $headers');
-
-      final response = await http.get(
-        Uri.parse(apiUrl),
-        headers: headers,
-      );
+      final response = await HttpClient.get('/users/$userId');
 
       print('=== API RESPONSE ===');
       print('Status code: ${response.statusCode}');
@@ -87,7 +60,7 @@ class UserService {
       print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
+        final responseData = json.decode(response.body);
         print('Parsed response data: $responseData');
 
         // Based on your backend code, the response should have a 'data' field

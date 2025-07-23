@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../../services/auth_service.dart';
 import '../../utils/constants.dart';
+import '../setup/instance_config_screen.dart';
 import '../home_screen.dart';
+import 'auth_loading_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -99,8 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: SingleChildScrollView(
           child: Container(
             constraints: const BoxConstraints(maxWidth: 500),
-            margin: const EdgeInsets.all(16),
-            padding: const EdgeInsets.all(32),
+            padding: const EdgeInsets.all(24),
             child: Theme(
               data: Theme.of(context).copyWith(
                 colorScheme: Theme.of(context).colorScheme.copyWith(
@@ -167,57 +168,69 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 32),
 
                     // Email Field
-                    TextFormField(
-                      controller: _emailController,
-                      focusNode: _emailFocusNode,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        hintText: 'example@gmail.com',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.mail),
+                    SizedBox(
+                      height: 50,
+                      child: TextFormField(
+                        controller: _emailController,
+                        focusNode: _emailFocusNode,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(
+                          labelText: 'Email',
+                          hintText: 'example@gmail.com',
+                          hintStyle: TextStyle(color: Colors.grey),
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.mail),
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Email required';
+                          }
+                          if (!value.contains('@')) {
+                            return 'Please enter a valid email';
+                          }
+                          return null;
+                        },
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Email required';
-                        }
-                        if (!value.contains('@')) {
-                          return 'Please enter a valid email';
-                        }
-                        return null;
-                      },
                     ),
                     const SizedBox(height: 16),
 
                     // Password Field
-                    TextFormField(
-                      controller: _passwordController,
-                      focusNode: _passwordFocusNode,
-                      obscureText: !_showPassword,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        hintText: 'Password',
-                        border: const OutlineInputBorder(),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _showPassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
+                    SizedBox(
+                      height: 50,
+                      child: TextFormField(
+                        controller: _passwordController,
+                        focusNode: _passwordFocusNode,
+                        obscureText: !_showPassword,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          hintText: 'Password',
+                          hintStyle: TextStyle(color: Colors.grey),
+                          border: const OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _showPassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _showPassword = !_showPassword;
+                              });
+                            },
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _showPassword = !_showPassword;
-                            });
-                          },
+                          prefixIcon: const Icon(Icons.lock),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
                         ),
-                        prefixIcon: const Icon(Icons.lock),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Password required';
+                          }
+                          return null;
+                        },
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Password required';
-                        }
-                        return null;
-                      },
                     ),
                     const SizedBox(height: 16),
 
@@ -323,6 +336,48 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ],
+
+                    const SizedBox(height: 16),
+
+                    // Change Instance Button
+                    Center(
+                      child: TextButton.icon(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => InstanceConfigScreen(
+                                onConfigurationComplete: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const AuthLoadingScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.settings,
+                          size: 16,
+                          color: Colors.grey,
+                        ),
+                        label: const Text(
+                          'Change Instance',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
+                        ),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

@@ -1,10 +1,12 @@
 // Screen that handles authentication/loading logic and shows splash widget
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../widgets/common/splash_widget.dart';
 import '../../services/auth_service.dart';
+import '../../services/storage_service.dart';
+import '../../services/health_check_service.dart';
+import '../setup/instance_config_screen.dart';
 import '../home_screen.dart';
 import 'login_screen.dart';
 
@@ -34,7 +36,22 @@ class _AuthLoadingScreenState extends State<AuthLoadingScreen> {
 
   Future<void> _performAppInitialization() async {
     try {
-      // Step 1: Check backend server connectivity
+      // Step 1: Check if API configuration exists
+      setState(() {
+        _currentMessage = "Checking configuration...";
+      });
+
+      final hasConfig = await StorageService.hasApiConfiguration();
+      if (!hasConfig) {
+        setState(() {
+          _currentMessage = "Configuration required...";
+        });
+        await Future.delayed(const Duration(seconds: 1));
+        _navigateToInstanceConfig();
+        return;
+      }
+
+      // Step 2: Check backend server connectivity
       setState(() {
         _currentMessage = "Checking server connection...";
       });
@@ -42,23 +59,26 @@ class _AuthLoadingScreenState extends State<AuthLoadingScreen> {
       final bool isServerResponsive = await _checkServerHealth();
       if (!isServerResponsive) {
         setState(() {
-          _currentMessage = "Server is not responding. Please try again later.";
+          _currentMessage =
+              "Server is not responding. Please check your configuration.";
         });
         // Don't proceed further if server is not responsive
+        await Future.delayed(const Duration(seconds: 2));
+        _navigateToInstanceConfig();
         return;
       }
 
-      // Step 2: Initialize services
+      // Step 3: Initialize services
       setState(() {
         _currentMessage = "Initializing services...";
       });
       await Future.delayed(const Duration(seconds: 1));
 
-      // Step 3: Debug shared preferences
+      // Step 4: Debug shared preferences
       print('=== AUTH LOADING SCREEN: Debugging shared preferences ===');
       await AuthService.debugSharedPreferences();
 
-      // Step 4: Check user authentication
+      // Step 5: Check user authentication
       setState(() {
         _currentMessage = "Checking authentication...";
       });
@@ -66,7 +86,7 @@ class _AuthLoadingScreenState extends State<AuthLoadingScreen> {
 
       final bool isUserLoggedIn = await _checkUserAuthentication();
 
-      // Step 5: Navigate based on auth status
+      // Step 6: Navigate based on auth status
       if (isUserLoggedIn) {
         setState(() {
           _currentMessage = "Loading dashboard...";
@@ -85,9 +105,9 @@ class _AuthLoadingScreenState extends State<AuthLoadingScreen> {
       setState(() {
         _currentMessage = "Error: ${e.toString()}";
       });
-      // Handle error - navigate to login as fallback
+      // Handle error - navigate to instance config as fallback
       await Future.delayed(const Duration(seconds: 2));
-      _navigateToLogin();
+      _navigateToInstanceConfig();
     }
   }
 
@@ -95,31 +115,25 @@ class _AuthLoadingScreenState extends State<AuthLoadingScreen> {
     try {
       print('=== CHECKING SERVER HEALTH ===');
 
-      // Get API base URL and port from environment
-      final baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost';
-      final port = dotenv.env['API_PORT'] ?? '8080';
-      final healthCheckUrl = '$baseUrl:$port';
+      // Get stored API URL
+      final storedUrl = await StorageService.getFullApiUrl();
+      String healthCheckUrl;
+
+      if (storedUrl != null) {
+        healthCheckUrl = storedUrl;
+        print('Using stored URL: $healthCheckUrl');
+      } else {
+        // Fallback to environment variables
+        final baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost';
+        final port = dotenv.env['API_PORT'] ?? '8080';
+        healthCheckUrl = '$baseUrl:$port';
+        print('Using fallback URL: $healthCheckUrl');
+      }
 
       print('Testing server at: $healthCheckUrl');
 
-      // Make a simple GET request to the base URL
-      final response = await http.get(
-        Uri.parse(healthCheckUrl),
-        headers: {'Content-Type': 'application/json'},
-      ).timeout(const Duration(seconds: 10));
-
-      print('Server response status: ${response.statusCode}');
-      print('Server response body: ${response.body}');
-
-      // Consider server responsive if we get ANY response (even 404, 500, etc.)
-      // This means the server is running and can handle requests
-      if (response.statusCode >= 200 && response.statusCode < 600) {
-        print('✅ Server is responsive');
-        return true;
-      } else {
-        print('❌ Server returned unexpected status: ${response.statusCode}');
-        return false;
-      }
+      // Use the health check service
+      return await HealthCheckService.checkServerHealth(healthCheckUrl);
     } catch (e) {
       print('❌ Server health check failed: $e');
       return false;
@@ -169,6 +183,23 @@ class _AuthLoadingScreenState extends State<AuthLoadingScreen> {
     print('=== AUTH LOADING SCREEN: Navigating to Login Screen ===');
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
+  }
+
+  void _navigateToInstanceConfig() {
+    print('=== AUTH LOADING SCREEN: Navigating to Instance Config Screen ===');
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => InstanceConfigScreen(
+          onConfigurationComplete: () {
+            // After configuration is complete, restart the app initialization
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                  builder: (context) => const AuthLoadingScreen()),
+            );
+          },
+        ),
+      ),
     );
   }
 

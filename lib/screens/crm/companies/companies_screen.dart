@@ -226,33 +226,38 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
       children: [
         // Search bar
         Padding(
-          padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 16),
-          child: TextField(
-            controller: _searchController,
-            onChanged: _filterCompanies,
-            decoration: InputDecoration(
-              hintText: 'Search companies...',
-              prefixIcon: const Icon(Icons.search),
-              suffixIcon: _searchController.text.isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        _searchController.clear();
-                        _filterCompanies('');
-                      },
-                    )
-                  : null,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey[300]!),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey[300]!),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Colors.blue),
+          padding: const EdgeInsets.only(bottom: 12),
+          child: SizedBox(
+            height: 40,
+            child: TextField(
+              controller: _searchController,
+              onChanged: _filterCompanies,
+              decoration: InputDecoration(
+                hintText: 'Search companies...',
+                prefixIcon: const Icon(Icons.search, size: 20),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, size: 20),
+                        onPressed: () {
+                          _searchController.clear();
+                          _filterCompanies('');
+                        },
+                      )
+                    : null,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(color: Colors.blue),
+                ),
               ),
             ),
           ),
@@ -264,7 +269,6 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
             color: Colors.blue,
             backgroundColor: Colors.white,
             child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
               itemCount: _filteredCompanies.length,
               itemBuilder: (context, index) {
                 final company = _filteredCompanies[index];
@@ -279,7 +283,7 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
 
   Widget _buildCompanyCard(Company company) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 8),
       elevation: 0,
       color: Colors.white,
       shape: RoundedRectangleBorder(
@@ -290,7 +294,7 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -299,19 +303,19 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
               children: [
                 // Company avatar
                 Container(
-                  width: 48,
-                  height: 48,
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
                     color: Colors.blue[100],
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     Icons.business,
                     color: Colors.blue[600],
-                    size: 24,
+                    size: 20,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -319,12 +323,12 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
                       Text(
                         company.name,
                         style: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: Colors.black87,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       if (company.country?.name != null)
                         Row(
                           children: [
@@ -346,28 +350,6 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
                     ],
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: company.isActive
-                        ? const Color(0xFFEAF2FF)
-                        : Colors.grey[100],
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    company.isActive ? 'ACTIVE' : 'INACTIVE',
-                    style: TextStyle(
-                      color: company.isActive
-                          ? const Color(0xFF006FFD)
-                          : Colors.grey[600],
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
               ],
             ),
 
@@ -375,7 +357,7 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
                 company.phone != null ||
                 company.postalCode != null ||
                 company.website != null)
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
 
             // Company details
             if (company.address != null)
@@ -413,27 +395,27 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
 
   Widget _buildInfoRow(IconData icon, String text, {bool isUrl = false}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 32,
-            height: 32,
+            width: 28,
+            height: 28,
             decoration: BoxDecoration(
               color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(
               icon,
-              size: 18,
+              size: 16,
               color: Colors.grey[600],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(top: 6),
+              padding: const EdgeInsets.only(top: 4),
               child: Text(
                 text,
                 style: TextStyle(

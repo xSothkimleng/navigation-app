@@ -3,12 +3,18 @@ import '../screens/crm/companies/create_company_screen.dart';
 import '../screens/crm/contacts/create_contact_screen.dart';
 import '../screens/sales/opportunities/create_opportunity_screen.dart';
 import '../screens/sales/opportunities/opportunity_detail_screen.dart';
+import '../screens/setup/instance_config_screen.dart';
 import '../screens/main_app_layout.dart';
 import 'app_routes.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case AppRoutes.instanceConfig:
+        return MaterialPageRoute(
+          builder: (_) => const InstanceConfigScreen(),
+        );
+
       case AppRoutes.createCompany:
         return MaterialPageRoute(
           builder: (_) => CreateCompanyScreen(

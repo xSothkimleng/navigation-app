@@ -102,7 +102,7 @@ class _MainAppLayoutState extends State<MainAppLayout>
                         ),
                       ],
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Row(
                       children: [
                         // Left side - Hamburger menu or back button

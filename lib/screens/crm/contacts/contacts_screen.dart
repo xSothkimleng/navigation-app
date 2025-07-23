@@ -225,33 +225,38 @@ class _ContactsScreenState extends State<ContactsScreen> {
       children: [
         // Search bar
         Padding(
-          padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 16),
-          child: TextField(
-            controller: _searchController,
-            onChanged: _filterContacts,
-            decoration: InputDecoration(
-              hintText: 'Search contacts...',
-              prefixIcon: const Icon(Icons.search),
-              suffixIcon: _searchController.text.isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        _searchController.clear();
-                        _filterContacts('');
-                      },
-                    )
-                  : null,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey[300]!),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey[300]!),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Colors.blue),
+          padding: const EdgeInsets.only(bottom: 12),
+          child: SizedBox(
+            height: 40,
+            child: TextField(
+              controller: _searchController,
+              onChanged: _filterContacts,
+              decoration: InputDecoration(
+                hintText: 'Search contacts...',
+                prefixIcon: const Icon(Icons.search, size: 20),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, size: 20),
+                        onPressed: () {
+                          _searchController.clear();
+                          _filterContacts('');
+                        },
+                      )
+                    : null,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(color: Colors.blue),
+                ),
               ),
             ),
           ),
@@ -263,7 +268,6 @@ class _ContactsScreenState extends State<ContactsScreen> {
             color: Colors.blue,
             backgroundColor: Colors.white,
             child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
               itemCount: _filteredContacts.length,
               itemBuilder: (context, index) {
                 final contact = _filteredContacts[index];
@@ -278,7 +282,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
 
   Widget _buildContactCard(Contact contact) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 8),
       elevation: 0,
       color: Colors.white,
       shape: RoundedRectangleBorder(
@@ -289,7 +293,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -298,19 +302,19 @@ class _ContactsScreenState extends State<ContactsScreen> {
               children: [
                 // Contact avatar
                 Container(
-                  width: 48,
-                  height: 48,
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
                     color: Colors.blue[100],
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     Icons.person,
                     color: Colors.blue[600],
-                    size: 24,
+                    size: 20,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -318,12 +322,12 @@ class _ContactsScreenState extends State<ContactsScreen> {
                       Text(
                         '${contact.firstName} ${contact.lastName}',
                         style: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: Colors.black87,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       if (contact.company != null &&
                           contact.company!.name.isNotEmpty)
                         Row(
@@ -351,35 +355,13 @@ class _ContactsScreenState extends State<ContactsScreen> {
                     ],
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: contact.isActive
-                        ? const Color(0xFFEAF2FF)
-                        : Colors.grey[100],
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    contact.isActive ? 'ACTIVE' : 'INACTIVE',
-                    style: TextStyle(
-                      color: contact.isActive
-                          ? const Color(0xFF006FFD)
-                          : Colors.grey[600],
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
               ],
             ),
 
             if (contact.email != null ||
                 contact.phone != null ||
                 contact.country != null)
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
 
             // Contact details
             if (contact.email != null)
@@ -411,27 +393,27 @@ class _ContactsScreenState extends State<ContactsScreen> {
 
   Widget _buildInfoRow(IconData icon, String text, {bool isUrl = false}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 32,
-            height: 32,
+            width: 28,
+            height: 28,
             decoration: BoxDecoration(
               color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(
               icon,
-              size: 18,
+              size: 16,
               color: Colors.grey[600],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(top: 6),
+              padding: const EdgeInsets.only(top: 4),
               child: Text(
                 text,
                 style: TextStyle(

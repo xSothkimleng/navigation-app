@@ -233,7 +233,7 @@ class _CreateCompanyScreenState extends State<CreateCompanyScreen> {
                   ),
                 ],
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Row(
                 children: [
                   // Left side - Back button
@@ -292,76 +292,101 @@ class _CreateCompanyScreenState extends State<CreateCompanyScreen> {
                     child:
                         ListView(padding: const EdgeInsets.all(8), children: [
                       // Company Name (Required)
-                      TextFormField(
-                        controller: _nameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Company Name',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.business),
+                      SizedBox(
+                        height: 50,
+                        child: TextFormField(
+                          controller: _nameController,
+                          decoration: const InputDecoration(
+                            labelText: 'Company Name',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.business, size: 20),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Company name is required';
+                            }
+                            return null;
+                          },
+                          textCapitalization: TextCapitalization.words,
                         ),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Company name is required';
-                          }
-                          return null;
-                        },
-                        textCapitalization: TextCapitalization.words,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
                       // Address
-                      TextFormField(
-                        controller: _addressController,
-                        decoration: const InputDecoration(
-                          labelText: 'Address',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.location_on),
+                      SizedBox(
+                        height: 50,
+                        child: TextFormField(
+                          controller: _addressController,
+                          decoration: const InputDecoration(
+                            labelText: 'Address',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.location_on, size: 20),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                          ),
+                          textCapitalization: TextCapitalization.words,
                         ),
-                        textCapitalization: TextCapitalization.words,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
                       // Phone
-                      TextFormField(
-                        controller: _phoneController,
-                        decoration: const InputDecoration(
-                          labelText: 'Phone',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.phone),
+                      SizedBox(
+                        height: 50,
+                        child: TextFormField(
+                          controller: _phoneController,
+                          decoration: const InputDecoration(
+                            labelText: 'Phone',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.phone, size: 20),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                          ),
+                          keyboardType: TextInputType.phone,
                         ),
-                        keyboardType: TextInputType.phone,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
                       // Postal Code
-                      TextFormField(
-                        controller: _postalCodeController,
-                        decoration: const InputDecoration(
-                          labelText: 'Postal Code',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.tag),
+                      SizedBox(
+                        height: 50,
+                        child: TextFormField(
+                          controller: _postalCodeController,
+                          decoration: const InputDecoration(
+                            labelText: 'Postal Code',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.tag, size: 20),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
                       // Website
-                      TextFormField(
-                        controller: _websiteController,
-                        decoration: const InputDecoration(
-                          labelText: 'Website',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.language),
-                          hintText: 'https://example.com',
-                          hintStyle: TextStyle(color: Colors.grey),
+                      SizedBox(
+                        height: 50,
+                        child: TextFormField(
+                          controller: _websiteController,
+                          decoration: const InputDecoration(
+                            labelText: 'Website',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.language, size: 20),
+                            hintText: 'https://example.com',
+                            hintStyle: TextStyle(color: Colors.grey),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                          ),
+                          keyboardType: TextInputType.url,
                         ),
-                        keyboardType: TextInputType.url,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
                       // Country Selection
                       _isLoadingCountries
                           ? const SizedBox(
-                              height: 56,
+                              height: 50,
                               child: Center(
                                 child: CircularProgressIndicator(),
                               ),
@@ -395,52 +420,58 @@ class _CreateCompanyScreenState extends State<CreateCompanyScreen> {
                                   ),
                                 ),
                               ),
-                              child: DropdownButtonFormField<Country>(
-                                value: _selectedCountry,
-                                decoration: InputDecoration(
-                                  labelText: 'Country',
-                                  border: const OutlineInputBorder(),
-                                  prefixIcon: const Icon(Icons.public),
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  floatingLabelStyle: TextStyle(
-                                    color: _selectedCountry != null
-                                        ? Colors.blue
-                                        : Colors.grey,
-                                  ),
-                                ),
-                                hint: const Text('Select a country'),
-                                items: [
-                                  // Add a "None" option to clear selection
-                                  const DropdownMenuItem<Country>(
-                                    value: null,
-                                    child: Text(
-                                      'None',
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontStyle: FontStyle.italic,
-                                      ),
+                              child: SizedBox(
+                                height: 50,
+                                child: DropdownButtonFormField<Country>(
+                                  value: _selectedCountry,
+                                  decoration: InputDecoration(
+                                    labelText: 'Country',
+                                    border: const OutlineInputBorder(),
+                                    prefixIcon:
+                                        const Icon(Icons.public, size: 20),
+                                    fillColor: Colors.white,
+                                    filled: true,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
+                                    floatingLabelStyle: TextStyle(
+                                      color: _selectedCountry != null
+                                          ? Colors.blue
+                                          : Colors.grey,
                                     ),
                                   ),
-                                  // Add all countries
-                                  ..._countries.map((Country country) {
-                                    return DropdownMenuItem<Country>(
-                                      value: country,
-                                      child: Text(country.nicename),
-                                    );
-                                  }),
-                                ],
-                                onChanged: (Country? newValue) {
-                                  setState(() {
-                                    _selectedCountry = newValue;
-                                  });
-                                },
-                                isExpanded: true,
-                                dropdownColor: Colors
-                                    .white, // White dropdown menu background
+                                  hint: const Text('Select a country'),
+                                  items: [
+                                    // Add a "None" option to clear selection
+                                    const DropdownMenuItem<Country>(
+                                      value: null,
+                                      child: Text(
+                                        'None',
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                          fontStyle: FontStyle.italic,
+                                        ),
+                                      ),
+                                    ),
+                                    // Add all countries
+                                    ..._countries.map((Country country) {
+                                      return DropdownMenuItem<Country>(
+                                        value: country,
+                                        child: Text(country.nicename),
+                                      );
+                                    }),
+                                  ],
+                                  onChanged: (Country? newValue) {
+                                    setState(() {
+                                      _selectedCountry = newValue;
+                                    });
+                                  },
+                                  isExpanded: true,
+                                  dropdownColor: Colors
+                                      .white, // White dropdown menu background
+                                ),
                               ),
                             ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
                       // Location Section
                       Column(
@@ -459,65 +490,77 @@ class _CreateCompanyScreenState extends State<CreateCompanyScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 12),
                           // Latitude
-                          TextFormField(
-                            controller: _latitudeController,
-                            decoration: const InputDecoration(
-                              labelText: 'Latitude',
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.swap_vert),
-                              hintText: '37.7749',
-                              hintStyle: TextStyle(color: Colors.grey),
-                            ),
-                            keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true,
-                              signed: true,
-                            ),
-                            validator: (value) {
-                              if (value != null && value.trim().isNotEmpty) {
-                                final lat = double.tryParse(value.trim());
-                                if (lat == null) {
-                                  return 'Invalid latitude';
+                          SizedBox(
+                            height: 50,
+                            child: TextFormField(
+                              controller: _latitudeController,
+                              decoration: const InputDecoration(
+                                labelText: 'Latitude',
+                                border: OutlineInputBorder(),
+                                prefixIcon: Icon(Icons.swap_vert, size: 20),
+                                hintText: '37.7749',
+                                hintStyle: TextStyle(color: Colors.grey),
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                decimal: true,
+                                signed: true,
+                              ),
+                              validator: (value) {
+                                if (value != null && value.trim().isNotEmpty) {
+                                  final lat = double.tryParse(value.trim());
+                                  if (lat == null) {
+                                    return 'Invalid latitude';
+                                  }
+                                  if (lat < -90 || lat > 90) {
+                                    return 'Latitude must be between -90 and 90';
+                                  }
                                 }
-                                if (lat < -90 || lat > 90) {
-                                  return 'Latitude must be between -90 and 90';
-                                }
-                              }
-                              return null;
-                            },
+                                return null;
+                              },
+                            ),
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 12),
                           // Longitude
-                          TextFormField(
-                            controller: _longitudeController,
-                            decoration: const InputDecoration(
-                              labelText: 'Longitude',
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.swap_horiz),
-                              hintText: '-122.4194',
-                              hintStyle: TextStyle(color: Colors.grey),
-                            ),
-                            keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true,
-                              signed: true,
-                            ),
-                            validator: (value) {
-                              if (value != null && value.trim().isNotEmpty) {
-                                final lng = double.tryParse(value.trim());
-                                if (lng == null) {
-                                  return 'Invalid longitude';
+                          SizedBox(
+                            height: 50,
+                            child: TextFormField(
+                              controller: _longitudeController,
+                              decoration: const InputDecoration(
+                                labelText: 'Longitude',
+                                border: OutlineInputBorder(),
+                                prefixIcon: Icon(Icons.swap_horiz, size: 20),
+                                hintText: '-122.4194',
+                                hintStyle: TextStyle(color: Colors.grey),
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                decimal: true,
+                                signed: true,
+                              ),
+                              validator: (value) {
+                                if (value != null && value.trim().isNotEmpty) {
+                                  final lng = double.tryParse(value.trim());
+                                  if (lng == null) {
+                                    return 'Invalid longitude';
+                                  }
+                                  if (lng < -180 || lng > 180) {
+                                    return 'Longitude must be between -180 and 180';
+                                  }
                                 }
-                                if (lng < -180 || lng > 180) {
-                                  return 'Longitude must be between -180 and 180';
-                                }
-                              }
-                              return null;
-                            },
+                                return null;
+                              },
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 20),
 
                       // Save Button
                       SizedBox(

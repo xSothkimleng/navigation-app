@@ -244,59 +244,65 @@ class _OpportunityDetailScreenState extends State<OpportunityDetailScreen> {
                   const SizedBox(height: 16),
 
                   // Stage dropdown
-                  Theme(
-                    data: Theme.of(context).copyWith(
-                      canvasColor: Colors.white, // White dropdown background
-                      inputDecorationTheme: InputDecorationTheme(
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.blue, width: 2.0),
-                        ),
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.grey, width: 1.0),
-                        ),
-                        labelStyle: const TextStyle(color: Colors.grey),
-                        floatingLabelStyle: const TextStyle(color: Colors.blue),
-                        prefixIconColor: MaterialStateColor.resolveWith(
-                          (Set<MaterialState> states) {
-                            if (states.contains(MaterialState.focused)) {
-                              return Colors.blue;
-                            }
-                            return Colors.grey;
-                          },
-                        ),
-                      ),
-                    ),
-                    child: DropdownButtonFormField<String>(
-                      value: selectedStageId,
-                      decoration: InputDecoration(
-                        labelText: 'Stage',
-                        border: const OutlineInputBorder(),
-                        prefixIcon: const Icon(Icons.timeline),
-                        fillColor: Colors.white,
-                        filled: true,
-                        floatingLabelStyle: TextStyle(
-                          color: selectedStageId != null
-                              ? Colors.blue
-                              : Colors.grey,
+                  SizedBox(
+                    height: 50,
+                    child: Theme(
+                      data: Theme.of(context).copyWith(
+                        canvasColor: Colors.white, // White dropdown background
+                        inputDecorationTheme: InputDecorationTheme(
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.blue, width: 2.0),
+                          ),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.grey, width: 1.0),
+                          ),
+                          labelStyle: const TextStyle(color: Colors.grey),
+                          floatingLabelStyle:
+                              const TextStyle(color: Colors.blue),
+                          prefixIconColor: MaterialStateColor.resolveWith(
+                            (Set<MaterialState> states) {
+                              if (states.contains(MaterialState.focused)) {
+                                return Colors.blue;
+                              }
+                              return Colors.grey;
+                            },
+                          ),
                         ),
                       ),
-                      hint: const Text('Select a stage'),
-                      items: _stages.map((stage) {
-                        return DropdownMenuItem<String>(
-                          value: stage.id,
-                          child: Text('${stage.name} (${stage.percentage}%)'),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setSheetState(() {
-                          selectedStageId = newValue;
-                        });
-                      },
-                      isExpanded: true,
-                      dropdownColor:
-                          Colors.white, // White dropdown menu background
+                      child: DropdownButtonFormField<String>(
+                        value: selectedStageId,
+                        decoration: InputDecoration(
+                          labelText: 'Stage',
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.timeline, size: 20),
+                          fillColor: Colors.white,
+                          filled: true,
+                          floatingLabelStyle: TextStyle(
+                            color: selectedStageId != null
+                                ? Colors.blue
+                                : Colors.grey,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                        ),
+                        hint: const Text('Select a stage'),
+                        items: _stages.map((stage) {
+                          return DropdownMenuItem<String>(
+                            value: stage.id,
+                            child: Text('${stage.name} (${stage.percentage}%)'),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setSheetState(() {
+                            selectedStageId = newValue;
+                          });
+                        },
+                        isExpanded: true,
+                        dropdownColor:
+                            Colors.white, // White dropdown menu background
+                      ),
                     ),
                   ),
 
@@ -480,8 +486,7 @@ class _OpportunityDetailScreenState extends State<OpportunityDetailScreen> {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.only(
-          left: 32.0, right: 32.0, bottom: 32.0, top: 32.0),
+      padding: const EdgeInsets.only(left: 24, right: 24, bottom: 24, top: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -508,7 +513,7 @@ class _OpportunityDetailScreenState extends State<OpportunityDetailScreen> {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -564,28 +569,6 @@ class _OpportunityDetailScreenState extends State<OpportunityDetailScreen> {
                         ],
                       ),
                     ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _opportunity!.isActive
-                        ? const Color(0xFFEAF2FF)
-                        : Colors.grey[100],
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    _opportunity!.isActive ? 'ACTIVE' : 'INACTIVE',
-                    style: TextStyle(
-                      color: _opportunity!.isActive
-                          ? const Color(0xFF006FFD)
-                          : Colors.grey[600],
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
                   ),
                 ),
               ],
@@ -655,27 +638,27 @@ class _OpportunityDetailScreenState extends State<OpportunityDetailScreen> {
       bool isEditable = false,
       VoidCallback? onTap}) {
     Widget content = Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 32,
-            height: 32,
+            width: 28,
+            height: 28,
             decoration: BoxDecoration(
               color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(
               icon,
-              size: 18,
+              size: 16,
               color: Colors.grey[600],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(top: 6),
+              padding: const EdgeInsets.only(top: 4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -741,27 +724,27 @@ class _OpportunityDetailScreenState extends State<OpportunityDetailScreen> {
 
   Widget _buildLocationRow(IconData icon, double latitude, double longitude) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 32,
-            height: 32,
+            width: 28,
+            height: 28,
             decoration: BoxDecoration(
               color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(
               icon,
-              size: 18,
+              size: 16,
               color: Colors.grey[600],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(top: 6),
+              padding: const EdgeInsets.only(top: 4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -812,7 +795,7 @@ class _OpportunityDetailScreenState extends State<OpportunityDetailScreen> {
             color: Colors.black87,
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 8),
         // Sample activity items
         _buildActivityItem(
           'John',
@@ -855,7 +838,7 @@ class _OpportunityDetailScreenState extends State<OpportunityDetailScreen> {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

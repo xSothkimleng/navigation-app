@@ -2,6 +2,9 @@ class AppRoutes {
   // Dashboard
   static const String dashboard = '/dashboard';
 
+  // Setup Routes
+  static const String instanceConfig = '/setup/instance-config';
+
   // CRM Routes
   static const String companies = '/crm/companies';
   static const String createCompany = '/crm/companies/create';

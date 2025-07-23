@@ -378,429 +378,479 @@ class _CreateOpportunityScreenState extends State<CreateOpportunityScreen> {
                       padding: const EdgeInsets.all(8),
                       children: [
                         // Opportunity Name (Required)
-                        TextFormField(
-                          controller: _nameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Opportunity Name',
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.business_center),
+                        SizedBox(
+                          height: 50,
+                          child: TextFormField(
+                            controller: _nameController,
+                            decoration: const InputDecoration(
+                              labelText: 'Opportunity Name',
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.business_center, size: 20),
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Opportunity name is required';
+                              }
+                              return null;
+                            },
+                            textCapitalization: TextCapitalization.words,
                           ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Opportunity name is required';
-                            }
-                            return null;
-                          },
-                          textCapitalization: TextCapitalization.words,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
 
                         // Amount (Required)
-                        TextFormField(
-                          controller: _amountController,
-                          decoration: const InputDecoration(
-                            labelText: 'Amount',
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.attach_money),
+                        SizedBox(
+                          height: 50,
+                          child: TextFormField(
+                            controller: _amountController,
+                            decoration: const InputDecoration(
+                              labelText: 'Amount',
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.attach_money, size: 20),
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
+                            ),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Amount is required';
+                              }
+                              if (double.tryParse(value.trim()) == null) {
+                                return 'Please enter a valid number';
+                              }
+                              return null;
+                            },
                           ),
-                          keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Amount is required';
-                            }
-                            if (double.tryParse(value.trim()) == null) {
-                              return 'Please enter a valid number';
-                            }
-                            return null;
-                          },
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
 
                         // Stage Selection
                         _isLoadingStages
                             ? const SizedBox(
-                                height: 56,
+                                height: 50,
                                 child: Center(
                                   child: CircularProgressIndicator(),
                                 ),
                               )
-                            : Theme(
-                                data: Theme.of(context).copyWith(
-                                  canvasColor:
-                                      Colors.white, // White dropdown background
-                                  inputDecorationTheme: InputDecorationTheme(
-                                    focusedBorder: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.blue, width: 2.0),
-                                    ),
-                                    enabledBorder: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.grey, width: 1.0),
-                                    ),
-                                    labelStyle:
-                                        const TextStyle(color: Colors.grey),
-                                    floatingLabelStyle: const TextStyle(
-                                        color:
-                                            Colors.blue), // Blue when selected
-                                    prefixIconColor:
-                                        MaterialStateColor.resolveWith(
-                                      (Set<MaterialState> states) {
-                                        if (states
-                                            .contains(MaterialState.focused)) {
-                                          return Colors.blue;
-                                        }
-                                        return Colors.grey;
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                child: DropdownButtonFormField<StageInfo>(
-                                  value: _selectedStage,
-                                  decoration: InputDecoration(
-                                    labelText: 'Stage',
-                                    border: const OutlineInputBorder(),
-                                    prefixIcon: const Icon(Icons.timeline),
-                                    fillColor: Colors.white,
-                                    filled: true,
-                                    floatingLabelStyle: TextStyle(
-                                      color: _selectedStage != null
-                                          ? Colors.blue
-                                          : Colors.grey,
+                            : SizedBox(
+                                height: 50,
+                                child: Theme(
+                                  data: Theme.of(context).copyWith(
+                                    canvasColor: Colors
+                                        .white, // White dropdown background
+                                    inputDecorationTheme: InputDecorationTheme(
+                                      focusedBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.blue, width: 2.0),
+                                      ),
+                                      enabledBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.grey, width: 1.0),
+                                      ),
+                                      labelStyle:
+                                          const TextStyle(color: Colors.grey),
+                                      floatingLabelStyle: const TextStyle(
+                                          color: Colors
+                                              .blue), // Blue when selected
+                                      prefixIconColor:
+                                          MaterialStateColor.resolveWith(
+                                        (Set<MaterialState> states) {
+                                          if (states.contains(
+                                              MaterialState.focused)) {
+                                            return Colors.blue;
+                                          }
+                                          return Colors.grey;
+                                        },
+                                      ),
                                     ),
                                   ),
-                                  hint: const Text('Select a stage'),
-                                  items: _stages.map((StageInfo stage) {
-                                    return DropdownMenuItem<StageInfo>(
-                                      value: stage,
-                                      child: Text(
-                                          '${stage.name} (${stage.percentage}%)'),
-                                    );
-                                  }).toList(),
-                                  onChanged: (StageInfo? newValue) {
-                                    setState(() {
-                                      _selectedStage = newValue;
-                                    });
-                                  },
-                                  validator: (value) => value == null
-                                      ? 'Please select a stage'
-                                      : null,
-                                  isExpanded: true,
-                                  dropdownColor: Colors
-                                      .white, // White dropdown menu background
+                                  child: DropdownButtonFormField<StageInfo>(
+                                    value: _selectedStage,
+                                    decoration: InputDecoration(
+                                      labelText: 'Stage',
+                                      border: const OutlineInputBorder(),
+                                      prefixIcon:
+                                          const Icon(Icons.timeline, size: 20),
+                                      fillColor: Colors.white,
+                                      filled: true,
+                                      floatingLabelStyle: TextStyle(
+                                        color: _selectedStage != null
+                                            ? Colors.blue
+                                            : Colors.grey,
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 8),
+                                    ),
+                                    hint: const Text('Select a stage'),
+                                    items: _stages.map((StageInfo stage) {
+                                      return DropdownMenuItem<StageInfo>(
+                                        value: stage,
+                                        child: Text(
+                                            '${stage.name} (${stage.percentage}%)'),
+                                      );
+                                    }).toList(),
+                                    onChanged: (StageInfo? newValue) {
+                                      setState(() {
+                                        _selectedStage = newValue;
+                                      });
+                                    },
+                                    validator: (value) => value == null
+                                        ? 'Please select a stage'
+                                        : null,
+                                    isExpanded: true,
+                                    dropdownColor: Colors
+                                        .white, // White dropdown menu background
+                                  ),
                                 ),
                               ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
 
                         // Company Selection
                         _isLoadingCompanies
                             ? const SizedBox(
-                                height: 56,
+                                height: 50,
                                 child: Center(
                                   child: CircularProgressIndicator(),
                                 ),
                               )
-                            : Theme(
-                                data: Theme.of(context).copyWith(
-                                  canvasColor:
-                                      Colors.white, // White dropdown background
-                                  inputDecorationTheme: InputDecorationTheme(
-                                    focusedBorder: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.blue, width: 2.0),
-                                    ),
-                                    enabledBorder: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.grey, width: 1.0),
-                                    ),
-                                    labelStyle:
-                                        const TextStyle(color: Colors.grey),
-                                    floatingLabelStyle: const TextStyle(
-                                        color:
-                                            Colors.blue), // Blue when selected
-                                    prefixIconColor:
-                                        MaterialStateColor.resolveWith(
-                                      (Set<MaterialState> states) {
-                                        if (states
-                                            .contains(MaterialState.focused)) {
-                                          return Colors.blue;
-                                        }
-                                        return Colors.grey;
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                child: DropdownButtonFormField<Company>(
-                                  value: _selectedCompany,
-                                  decoration: InputDecoration(
-                                    labelText: 'Company',
-                                    border: const OutlineInputBorder(),
-                                    prefixIcon: const Icon(Icons.business),
-                                    fillColor: Colors.white,
-                                    filled: true,
-                                    floatingLabelStyle: TextStyle(
-                                      color: _selectedCompany != null
-                                          ? Colors.blue
-                                          : Colors.grey,
+                            : SizedBox(
+                                height: 50,
+                                child: Theme(
+                                  data: Theme.of(context).copyWith(
+                                    canvasColor: Colors
+                                        .white, // White dropdown background
+                                    inputDecorationTheme: InputDecorationTheme(
+                                      focusedBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.blue, width: 2.0),
+                                      ),
+                                      enabledBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.grey, width: 1.0),
+                                      ),
+                                      labelStyle:
+                                          const TextStyle(color: Colors.grey),
+                                      floatingLabelStyle: const TextStyle(
+                                          color: Colors
+                                              .blue), // Blue when selected
+                                      prefixIconColor:
+                                          MaterialStateColor.resolveWith(
+                                        (Set<MaterialState> states) {
+                                          if (states.contains(
+                                              MaterialState.focused)) {
+                                            return Colors.blue;
+                                          }
+                                          return Colors.grey;
+                                        },
+                                      ),
                                     ),
                                   ),
-                                  hint: const Text('Select a company'),
-                                  items: _companies.map((Company company) {
-                                    return DropdownMenuItem<Company>(
-                                      value: company,
-                                      child: Text(company.name),
-                                    );
-                                  }).toList(),
-                                  onChanged: (Company? newValue) {
-                                    setState(() {
-                                      _selectedCompany = newValue;
-                                    });
-                                  },
-                                  validator: (value) => value == null
-                                      ? 'Please select a company'
-                                      : null,
-                                  isExpanded: true,
-                                  dropdownColor: Colors
-                                      .white, // White dropdown menu background
+                                  child: DropdownButtonFormField<Company>(
+                                    value: _selectedCompany,
+                                    decoration: InputDecoration(
+                                      labelText: 'Company',
+                                      border: const OutlineInputBorder(),
+                                      prefixIcon:
+                                          const Icon(Icons.business, size: 20),
+                                      fillColor: Colors.white,
+                                      filled: true,
+                                      floatingLabelStyle: TextStyle(
+                                        color: _selectedCompany != null
+                                            ? Colors.blue
+                                            : Colors.grey,
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 8),
+                                    ),
+                                    hint: const Text('Select a company'),
+                                    items: _companies.map((Company company) {
+                                      return DropdownMenuItem<Company>(
+                                        value: company,
+                                        child: Text(company.name),
+                                      );
+                                    }).toList(),
+                                    onChanged: (Company? newValue) {
+                                      setState(() {
+                                        _selectedCompany = newValue;
+                                      });
+                                    },
+                                    validator: (value) => value == null
+                                        ? 'Please select a company'
+                                        : null,
+                                    isExpanded: true,
+                                    dropdownColor: Colors
+                                        .white, // White dropdown menu background
+                                  ),
                                 ),
                               ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
 
                         // Contact Selection
                         _isLoadingContacts
                             ? const SizedBox(
-                                height: 56,
+                                height: 50,
                                 child: Center(
                                   child: CircularProgressIndicator(),
                                 ),
                               )
-                            : Theme(
-                                data: Theme.of(context).copyWith(
-                                  canvasColor:
-                                      Colors.white, // White dropdown background
-                                  inputDecorationTheme: InputDecorationTheme(
-                                    focusedBorder: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.blue, width: 2.0),
-                                    ),
-                                    enabledBorder: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.grey, width: 1.0),
-                                    ),
-                                    labelStyle:
-                                        const TextStyle(color: Colors.grey),
-                                    floatingLabelStyle: const TextStyle(
-                                        color:
-                                            Colors.blue), // Blue when selected
-                                    prefixIconColor:
-                                        MaterialStateColor.resolveWith(
-                                      (Set<MaterialState> states) {
-                                        if (states
-                                            .contains(MaterialState.focused)) {
-                                          return Colors.blue;
-                                        }
-                                        return Colors.grey;
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                child: DropdownButtonFormField<Contact>(
-                                  value: _selectedContact,
-                                  decoration: InputDecoration(
-                                    labelText: 'Contact',
-                                    border: const OutlineInputBorder(),
-                                    prefixIcon: const Icon(Icons.person),
-                                    fillColor: Colors.white,
-                                    filled: true,
-                                    floatingLabelStyle: TextStyle(
-                                      color: _selectedContact != null
-                                          ? Colors.blue
-                                          : Colors.grey,
+                            : SizedBox(
+                                height: 50,
+                                child: Theme(
+                                  data: Theme.of(context).copyWith(
+                                    canvasColor: Colors
+                                        .white, // White dropdown background
+                                    inputDecorationTheme: InputDecorationTheme(
+                                      focusedBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.blue, width: 2.0),
+                                      ),
+                                      enabledBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.grey, width: 1.0),
+                                      ),
+                                      labelStyle:
+                                          const TextStyle(color: Colors.grey),
+                                      floatingLabelStyle: const TextStyle(
+                                          color: Colors
+                                              .blue), // Blue when selected
+                                      prefixIconColor:
+                                          MaterialStateColor.resolveWith(
+                                        (Set<MaterialState> states) {
+                                          if (states.contains(
+                                              MaterialState.focused)) {
+                                            return Colors.blue;
+                                          }
+                                          return Colors.grey;
+                                        },
+                                      ),
                                     ),
                                   ),
-                                  hint: const Text('Select a contact'),
-                                  items: _contacts.map((Contact contact) {
-                                    return DropdownMenuItem<Contact>(
-                                      value: contact,
-                                      child: Text(
-                                          '${contact.firstName} ${contact.lastName}'),
-                                    );
-                                  }).toList(),
-                                  onChanged: (Contact? newValue) {
-                                    setState(() {
-                                      _selectedContact = newValue;
-                                    });
-                                  },
-                                  validator: (value) => value == null
-                                      ? 'Please select a contact'
-                                      : null,
-                                  isExpanded: true,
-                                  dropdownColor: Colors
-                                      .white, // White dropdown menu background
+                                  child: DropdownButtonFormField<Contact>(
+                                    value: _selectedContact,
+                                    decoration: InputDecoration(
+                                      labelText: 'Contact',
+                                      border: const OutlineInputBorder(),
+                                      prefixIcon:
+                                          const Icon(Icons.person, size: 20),
+                                      fillColor: Colors.white,
+                                      filled: true,
+                                      floatingLabelStyle: TextStyle(
+                                        color: _selectedContact != null
+                                            ? Colors.blue
+                                            : Colors.grey,
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 8),
+                                    ),
+                                    hint: const Text('Select a contact'),
+                                    items: _contacts.map((Contact contact) {
+                                      return DropdownMenuItem<Contact>(
+                                        value: contact,
+                                        child: Text(
+                                            '${contact.firstName} ${contact.lastName}'),
+                                      );
+                                    }).toList(),
+                                    onChanged: (Contact? newValue) {
+                                      setState(() {
+                                        _selectedContact = newValue;
+                                      });
+                                    },
+                                    validator: (value) => value == null
+                                        ? 'Please select a contact'
+                                        : null,
+                                    isExpanded: true,
+                                    dropdownColor: Colors
+                                        .white, // White dropdown menu background
+                                  ),
                                 ),
                               ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
 
                         // Territory Selection
                         _isLoadingTerritories
                             ? const SizedBox(
-                                height: 56,
+                                height: 50,
                                 child: Center(
                                   child: CircularProgressIndicator(),
                                 ),
                               )
-                            : Theme(
-                                data: Theme.of(context).copyWith(
-                                  canvasColor:
-                                      Colors.white, // White dropdown background
-                                  inputDecorationTheme: InputDecorationTheme(
-                                    focusedBorder: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.blue, width: 2.0),
-                                    ),
-                                    enabledBorder: const OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.grey, width: 1.0),
-                                    ),
-                                    labelStyle:
-                                        const TextStyle(color: Colors.grey),
-                                    floatingLabelStyle: const TextStyle(
-                                        color:
-                                            Colors.blue), // Blue when selected
-                                    prefixIconColor:
-                                        MaterialStateColor.resolveWith(
-                                      (Set<MaterialState> states) {
-                                        if (states
-                                            .contains(MaterialState.focused)) {
-                                          return Colors.blue;
-                                        }
-                                        return Colors.grey;
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                child: DropdownButtonFormField<TerritoryInfo>(
-                                  value: _selectedTerritory,
-                                  decoration: InputDecoration(
-                                    labelText: 'Territory',
-                                    border: const OutlineInputBorder(),
-                                    prefixIcon: const Icon(Icons.map),
-                                    fillColor: Colors.white,
-                                    filled: true,
-                                    floatingLabelStyle: TextStyle(
-                                      color: _selectedTerritory != null
-                                          ? Colors.blue
-                                          : Colors.grey,
+                            : SizedBox(
+                                height: 50,
+                                child: Theme(
+                                  data: Theme.of(context).copyWith(
+                                    canvasColor: Colors
+                                        .white, // White dropdown background
+                                    inputDecorationTheme: InputDecorationTheme(
+                                      focusedBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.blue, width: 2.0),
+                                      ),
+                                      enabledBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Colors.grey, width: 1.0),
+                                      ),
+                                      labelStyle:
+                                          const TextStyle(color: Colors.grey),
+                                      floatingLabelStyle: const TextStyle(
+                                          color: Colors
+                                              .blue), // Blue when selected
+                                      prefixIconColor:
+                                          MaterialStateColor.resolveWith(
+                                        (Set<MaterialState> states) {
+                                          if (states.contains(
+                                              MaterialState.focused)) {
+                                            return Colors.blue;
+                                          }
+                                          return Colors.grey;
+                                        },
+                                      ),
                                     ),
                                   ),
-                                  hint: const Text('Select a territory'),
-                                  items: _territories
-                                      .map((TerritoryInfo territory) {
-                                    return DropdownMenuItem<TerritoryInfo>(
-                                      value: territory,
-                                      child: Text(territory.name),
-                                    );
-                                  }).toList(),
-                                  onChanged: (TerritoryInfo? newValue) {
-                                    setState(() {
-                                      _selectedTerritory = newValue;
-                                    });
-                                  },
-                                  validator: (value) => value == null
-                                      ? 'Please select a territory'
-                                      : null,
-                                  isExpanded: true,
-                                  dropdownColor: Colors
-                                      .white, // White dropdown menu background
+                                  child: DropdownButtonFormField<TerritoryInfo>(
+                                    value: _selectedTerritory,
+                                    decoration: InputDecoration(
+                                      labelText: 'Territory',
+                                      border: const OutlineInputBorder(),
+                                      prefixIcon:
+                                          const Icon(Icons.map, size: 20),
+                                      fillColor: Colors.white,
+                                      filled: true,
+                                      floatingLabelStyle: TextStyle(
+                                        color: _selectedTerritory != null
+                                            ? Colors.blue
+                                            : Colors.grey,
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 8),
+                                    ),
+                                    hint: const Text('Select a territory'),
+                                    items: _territories
+                                        .map((TerritoryInfo territory) {
+                                      return DropdownMenuItem<TerritoryInfo>(
+                                        value: territory,
+                                        child: Text(territory.name),
+                                      );
+                                    }).toList(),
+                                    onChanged: (TerritoryInfo? newValue) {
+                                      setState(() {
+                                        _selectedTerritory = newValue;
+                                      });
+                                    },
+                                    validator: (value) => value == null
+                                        ? 'Please select a territory'
+                                        : null,
+                                    isExpanded: true,
+                                    dropdownColor: Colors
+                                        .white, // White dropdown menu background
+                                  ),
                                 ),
                               ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
 
                         // Estimate Close Date
-                        InkWell(
-                          onTap: () => _selectDate(),
-                          child: InputDecorator(
-                            decoration: InputDecoration(
-                              labelText: 'Estimate Close Date',
-                              border: const OutlineInputBorder(),
-                              focusedBorder: const OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.blue, width: 2.0),
+                        SizedBox(
+                          height: 50,
+                          child: InkWell(
+                            onTap: () => _selectDate(),
+                            child: InputDecorator(
+                              decoration: InputDecoration(
+                                labelText: 'Estimate Close Date',
+                                border: const OutlineInputBorder(),
+                                focusedBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.blue, width: 2.0),
+                                ),
+                                enabledBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.grey, width: 1.0),
+                                ),
+                                labelStyle: const TextStyle(color: Colors.grey),
+                                floatingLabelStyle: TextStyle(
+                                  color: _selectedEstimateCloseDate != null
+                                      ? Colors.blue
+                                      : Colors.grey,
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.calendar_today,
+                                  size: 20,
+                                  color: _selectedEstimateCloseDate != null
+                                      ? Colors.blue
+                                      : Colors.grey,
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
                               ),
-                              enabledBorder: const OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.grey, width: 1.0),
-                              ),
-                              labelStyle: const TextStyle(color: Colors.grey),
-                              floatingLabelStyle: TextStyle(
-                                color: _selectedEstimateCloseDate != null
-                                    ? Colors.blue
-                                    : Colors.grey,
-                              ),
-                              prefixIcon: Icon(
-                                Icons.calendar_today,
-                                color: _selectedEstimateCloseDate != null
-                                    ? Colors.blue
-                                    : Colors.grey,
-                              ),
-                            ),
-                            child: Text(
-                              _selectedEstimateCloseDate != null
-                                  ? DateFormat('MMM dd, yyyy')
-                                      .format(_selectedEstimateCloseDate!)
-                                  : 'Select date (optional)',
-                              style: TextStyle(
-                                color: _selectedEstimateCloseDate != null
-                                    ? Colors.black87
-                                    : Colors.grey[600],
+                              child: Text(
+                                _selectedEstimateCloseDate != null
+                                    ? DateFormat('MMM dd, yyyy')
+                                        .format(_selectedEstimateCloseDate!)
+                                    : 'Select date (optional)',
+                                style: TextStyle(
+                                  color: _selectedEstimateCloseDate != null
+                                      ? Colors.black87
+                                      : Colors.grey[600],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
 
                         // Actual Close Date
-                        InkWell(
-                          onTap: () => _selectActualDate(),
-                          child: InputDecorator(
-                            decoration: InputDecoration(
-                              labelText: 'Actual Close Date',
-                              border: const OutlineInputBorder(),
-                              focusedBorder: const OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.blue, width: 2.0),
+                        SizedBox(
+                          height: 50,
+                          child: InkWell(
+                            onTap: () => _selectActualDate(),
+                            child: InputDecorator(
+                              decoration: InputDecoration(
+                                labelText: 'Actual Close Date',
+                                border: const OutlineInputBorder(),
+                                focusedBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.blue, width: 2.0),
+                                ),
+                                enabledBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.grey, width: 1.0),
+                                ),
+                                labelStyle: const TextStyle(color: Colors.grey),
+                                floatingLabelStyle: TextStyle(
+                                  color: _selectedActualCloseDate != null
+                                      ? Colors.blue
+                                      : Colors.grey,
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.event_available,
+                                  size: 20,
+                                  color: _selectedActualCloseDate != null
+                                      ? Colors.blue
+                                      : Colors.grey,
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
                               ),
-                              enabledBorder: const OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.grey, width: 1.0),
-                              ),
-                              labelStyle: const TextStyle(color: Colors.grey),
-                              floatingLabelStyle: TextStyle(
-                                color: _selectedActualCloseDate != null
-                                    ? Colors.blue
-                                    : Colors.grey,
-                              ),
-                              prefixIcon: Icon(
-                                Icons.event_available,
-                                color: _selectedActualCloseDate != null
-                                    ? Colors.blue
-                                    : Colors.grey,
-                              ),
-                            ),
-                            child: Text(
-                              _selectedActualCloseDate != null
-                                  ? DateFormat('MMM dd, yyyy')
-                                      .format(_selectedActualCloseDate!)
-                                  : 'Select date (optional)',
-                              style: TextStyle(
-                                color: _selectedActualCloseDate != null
-                                    ? Colors.black87
-                                    : Colors.grey[600],
+                              child: Text(
+                                _selectedActualCloseDate != null
+                                    ? DateFormat('MMM dd, yyyy')
+                                        .format(_selectedActualCloseDate!)
+                                    : 'Select date (optional)',
+                                style: TextStyle(
+                                  color: _selectedActualCloseDate != null
+                                      ? Colors.black87
+                                      : Colors.grey[600],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
 
                         // Location Override Section
                         Column(
@@ -809,7 +859,7 @@ class _CreateOpportunityScreenState extends State<CreateOpportunityScreen> {
                             Row(
                               children: [
                                 const Icon(Icons.location_on,
-                                    color: Colors.blue),
+                                    color: Colors.blue, size: 20),
                                 const SizedBox(width: 8),
                                 const Text(
                                   'Location Override (Optional)',
@@ -820,67 +870,79 @@ class _CreateOpportunityScreenState extends State<CreateOpportunityScreen> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 12),
                             // Latitude
-                            TextFormField(
-                              controller: _latitudeController,
-                              decoration: const InputDecoration(
-                                labelText: 'Latitude',
-                                border: OutlineInputBorder(),
-                                prefixIcon: Icon(Icons.swap_vert),
-                                hintText: '37.7749',
-                                hintStyle: TextStyle(color: Colors.grey),
-                              ),
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                decimal: true,
-                                signed: true,
-                              ),
-                              validator: (value) {
-                                if (value != null && value.trim().isNotEmpty) {
-                                  final lat = double.tryParse(value.trim());
-                                  if (lat == null) {
-                                    return 'Invalid latitude';
+                            SizedBox(
+                              height: 50,
+                              child: TextFormField(
+                                controller: _latitudeController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Latitude',
+                                  border: OutlineInputBorder(),
+                                  prefixIcon: Icon(Icons.swap_vert, size: 20),
+                                  hintText: '37.7749',
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
+                                ),
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                  decimal: true,
+                                  signed: true,
+                                ),
+                                validator: (value) {
+                                  if (value != null &&
+                                      value.trim().isNotEmpty) {
+                                    final lat = double.tryParse(value.trim());
+                                    if (lat == null) {
+                                      return 'Invalid latitude';
+                                    }
+                                    if (lat < -90 || lat > 90) {
+                                      return 'Latitude must be between -90 and 90';
+                                    }
                                   }
-                                  if (lat < -90 || lat > 90) {
-                                    return 'Latitude must be between -90 and 90';
-                                  }
-                                }
-                                return null;
-                              },
+                                  return null;
+                                },
+                              ),
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 12),
                             // Longitude
-                            TextFormField(
-                              controller: _longitudeController,
-                              decoration: const InputDecoration(
-                                labelText: 'Longitude',
-                                border: OutlineInputBorder(),
-                                prefixIcon: Icon(Icons.swap_horiz),
-                                hintText: '-122.4194',
-                                hintStyle: TextStyle(color: Colors.grey),
-                              ),
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                decimal: true,
-                                signed: true,
-                              ),
-                              validator: (value) {
-                                if (value != null && value.trim().isNotEmpty) {
-                                  final lng = double.tryParse(value.trim());
-                                  if (lng == null) {
-                                    return 'Invalid longitude';
+                            SizedBox(
+                              height: 50,
+                              child: TextFormField(
+                                controller: _longitudeController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Longitude',
+                                  border: OutlineInputBorder(),
+                                  prefixIcon: Icon(Icons.swap_horiz, size: 20),
+                                  hintText: '-122.4194',
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
+                                ),
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                  decimal: true,
+                                  signed: true,
+                                ),
+                                validator: (value) {
+                                  if (value != null &&
+                                      value.trim().isNotEmpty) {
+                                    final lng = double.tryParse(value.trim());
+                                    if (lng == null) {
+                                      return 'Invalid longitude';
+                                    }
+                                    if (lng < -180 || lng > 180) {
+                                      return 'Longitude must be between -180 and 180';
+                                    }
                                   }
-                                  if (lng < -180 || lng > 180) {
-                                    return 'Longitude must be between -180 and 180';
-                                  }
-                                }
-                                return null;
-                              },
+                                  return null;
+                                },
+                              ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 20),
 
                         // Save Button
                         SizedBox(

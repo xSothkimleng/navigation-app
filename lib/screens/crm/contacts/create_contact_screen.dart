@@ -252,80 +252,100 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                     child:
                         ListView(padding: const EdgeInsets.all(8), children: [
                       // First Name (Required)
-                      TextFormField(
-                        controller: _firstNameController,
-                        decoration: const InputDecoration(
-                          labelText: 'First Name',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.person),
+                      SizedBox(
+                        height: 50,
+                        child: TextFormField(
+                          controller: _firstNameController,
+                          decoration: const InputDecoration(
+                            labelText: 'First Name',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.person, size: 20),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'First name is required';
+                            }
+                            return null;
+                          },
+                          textCapitalization: TextCapitalization.words,
                         ),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'First name is required';
-                          }
-                          return null;
-                        },
-                        textCapitalization: TextCapitalization.words,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
                       // Last Name (Required)
-                      TextFormField(
-                        controller: _lastNameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Last Name',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.person_outline),
+                      SizedBox(
+                        height: 50,
+                        child: TextFormField(
+                          controller: _lastNameController,
+                          decoration: const InputDecoration(
+                            labelText: 'Last Name',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.person_outline, size: 20),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Last name is required';
+                            }
+                            return null;
+                          },
+                          textCapitalization: TextCapitalization.words,
                         ),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Last name is required';
-                          }
-                          return null;
-                        },
-                        textCapitalization: TextCapitalization.words,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
                       // Email
-                      TextFormField(
-                        controller: _emailController,
-                        decoration: const InputDecoration(
-                          labelText: 'Email',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.email),
-                          hintText: 'example@email.com',
-                          hintStyle: TextStyle(color: Colors.grey),
-                        ),
-                        keyboardType: TextInputType.emailAddress,
-                        validator: (value) {
-                          if (value != null && value.trim().isNotEmpty) {
-                            final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-                            if (!emailRegex.hasMatch(value.trim())) {
-                              return 'Please enter a valid email address';
+                      SizedBox(
+                        height: 50,
+                        child: TextFormField(
+                          controller: _emailController,
+                          decoration: const InputDecoration(
+                            labelText: 'Email',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.email, size: 20),
+                            hintText: 'example@email.com',
+                            hintStyle: TextStyle(color: Colors.grey),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value != null && value.trim().isNotEmpty) {
+                              final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+                              if (!emailRegex.hasMatch(value.trim())) {
+                                return 'Please enter a valid email address';
+                              }
                             }
-                          }
-                          return null;
-                        },
+                            return null;
+                          },
+                        ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
                       // Phone
-                      TextFormField(
-                        controller: _phoneController,
-                        decoration: const InputDecoration(
-                          labelText: 'Phone',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.phone),
+                      SizedBox(
+                        height: 50,
+                        child: TextFormField(
+                          controller: _phoneController,
+                          decoration: const InputDecoration(
+                            labelText: 'Phone',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.phone, size: 20),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                          ),
+                          keyboardType: TextInputType.phone,
                         ),
-                        keyboardType: TextInputType.phone,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
                       // Country Selection
                       _isLoadingCountries
                           ? const SizedBox(
-                              height: 56,
+                              height: 50,
                               child: Center(
                                 child: CircularProgressIndicator(),
                               ),
@@ -359,57 +379,63 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                   ),
                                 ),
                               ),
-                              child: DropdownButtonFormField<Country>(
-                                value: _selectedCountry,
-                                decoration: InputDecoration(
-                                  labelText: 'Country',
-                                  border: const OutlineInputBorder(),
-                                  prefixIcon: const Icon(Icons.public),
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  floatingLabelStyle: TextStyle(
-                                    color: _selectedCountry != null
-                                        ? Colors.blue
-                                        : Colors.grey,
-                                  ),
-                                ),
-                                hint: const Text('Select a country'),
-                                items: [
-                                  // Add a "None" option to clear selection
-                                  const DropdownMenuItem<Country>(
-                                    value: null,
-                                    child: Text(
-                                      'None',
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontStyle: FontStyle.italic,
-                                      ),
+                              child: SizedBox(
+                                height: 50,
+                                child: DropdownButtonFormField<Country>(
+                                  value: _selectedCountry,
+                                  decoration: InputDecoration(
+                                    labelText: 'Country',
+                                    border: const OutlineInputBorder(),
+                                    prefixIcon:
+                                        const Icon(Icons.public, size: 20),
+                                    fillColor: Colors.white,
+                                    filled: true,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
+                                    floatingLabelStyle: TextStyle(
+                                      color: _selectedCountry != null
+                                          ? Colors.blue
+                                          : Colors.grey,
                                     ),
                                   ),
-                                  // Add all countries
-                                  ..._countries.map((Country country) {
-                                    return DropdownMenuItem<Country>(
-                                      value: country,
-                                      child: Text(country.name),
-                                    );
-                                  }),
-                                ],
-                                onChanged: (Country? newValue) {
-                                  setState(() {
-                                    _selectedCountry = newValue;
-                                  });
-                                },
-                                isExpanded: true,
-                                dropdownColor: Colors
-                                    .white, // White dropdown menu background
+                                  hint: const Text('Select a country'),
+                                  items: [
+                                    // Add a "None" option to clear selection
+                                    const DropdownMenuItem<Country>(
+                                      value: null,
+                                      child: Text(
+                                        'None',
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                          fontStyle: FontStyle.italic,
+                                        ),
+                                      ),
+                                    ),
+                                    // Add all countries
+                                    ..._countries.map((Country country) {
+                                      return DropdownMenuItem<Country>(
+                                        value: country,
+                                        child: Text(country.name),
+                                      );
+                                    }),
+                                  ],
+                                  onChanged: (Country? newValue) {
+                                    setState(() {
+                                      _selectedCountry = newValue;
+                                    });
+                                  },
+                                  isExpanded: true,
+                                  dropdownColor: Colors
+                                      .white, // White dropdown menu background
+                                ),
                               ),
                             ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
                       // Company Selection
                       _isLoadingCompanies
                           ? const SizedBox(
-                              height: 56,
+                              height: 50,
                               child: Center(
                                 child: CircularProgressIndicator(),
                               ),
@@ -443,53 +469,59 @@ class _CreateContactScreenState extends State<CreateContactScreen> {
                                   ),
                                 ),
                               ),
-                              child: DropdownButtonFormField<Company>(
-                                value: _selectedCompany,
-                                decoration: InputDecoration(
-                                  labelText: 'Company',
-                                  border: const OutlineInputBorder(),
-                                  prefixIcon: const Icon(Icons.business),
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  floatingLabelStyle: TextStyle(
-                                    color: _selectedCompany != null
-                                        ? Colors.blue
-                                        : Colors.grey,
-                                  ),
-                                ),
-                                hint: const Text('Select a company'),
-                                items: [
-                                  // Add a "None" option to clear selection
-                                  const DropdownMenuItem<Company>(
-                                    value: null,
-                                    child: Text(
-                                      'None',
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontStyle: FontStyle.italic,
-                                      ),
+                              child: SizedBox(
+                                height: 50,
+                                child: DropdownButtonFormField<Company>(
+                                  value: _selectedCompany,
+                                  decoration: InputDecoration(
+                                    labelText: 'Company',
+                                    border: const OutlineInputBorder(),
+                                    prefixIcon:
+                                        const Icon(Icons.business, size: 20),
+                                    fillColor: Colors.white,
+                                    filled: true,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
+                                    floatingLabelStyle: TextStyle(
+                                      color: _selectedCompany != null
+                                          ? Colors.blue
+                                          : Colors.grey,
                                     ),
                                   ),
-                                  // Add all companies
-                                  ..._companies.map((Company company) {
-                                    return DropdownMenuItem<Company>(
-                                      value: company,
-                                      child: Text(company.name),
-                                    );
-                                  }),
-                                ],
-                                onChanged: (Company? newValue) {
-                                  setState(() {
-                                    _selectedCompany = newValue;
-                                  });
-                                },
-                                isExpanded: true,
-                                dropdownColor: Colors
-                                    .white, // White dropdown menu background
+                                  hint: const Text('Select a company'),
+                                  items: [
+                                    // Add a "None" option to clear selection
+                                    const DropdownMenuItem<Company>(
+                                      value: null,
+                                      child: Text(
+                                        'None',
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                          fontStyle: FontStyle.italic,
+                                        ),
+                                      ),
+                                    ),
+                                    // Add all companies
+                                    ..._companies.map((Company company) {
+                                      return DropdownMenuItem<Company>(
+                                        value: company,
+                                        child: Text(company.name),
+                                      );
+                                    }),
+                                  ],
+                                  onChanged: (Company? newValue) {
+                                    setState(() {
+                                      _selectedCompany = newValue;
+                                    });
+                                  },
+                                  isExpanded: true,
+                                  dropdownColor: Colors
+                                      .white, // White dropdown menu background
+                                ),
                               ),
                             ),
 
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 20),
 
                       // Save Button
                       SizedBox(

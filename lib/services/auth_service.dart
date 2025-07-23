@@ -4,12 +4,22 @@ import 'package:http/http.dart' as http;
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/api_response.dart';
+import 'storage_service.dart';
 
 class AuthService {
   static String get _baseUrl =>
       dotenv.env['API_BASE_URL'] ?? 'http://localhost';
   static String get _port => dotenv.env['API_PORT'] ?? '8080';
-  static String get _authUrl => '$_baseUrl:$_port/auth';
+  static String get _fallbackAuthUrl => '$_baseUrl:$_port/auth';
+
+  /// Get auth URL from storage or fallback to environment variables
+  static Future<String> _getAuthUrl() async {
+    final storedUrl = await StorageService.getFullApiUrl();
+    if (storedUrl != null) {
+      return '$storedUrl/auth';
+    }
+    return _fallbackAuthUrl;
+  }
 
   static String? _jwtToken;
   static Map<String, dynamic>? _userInfo;
@@ -23,8 +33,9 @@ class AuthService {
         'Content-Type': 'application/json',
       };
 
+      final authUrl = await _getAuthUrl();
       final response = await http.post(
-        Uri.parse('$_authUrl/login'),
+        Uri.parse('$authUrl/login'),
         headers: headers,
         body: jsonEncode({
           'email': email,
@@ -236,8 +247,9 @@ class AuthService {
         headers['Cookie'] = 'jwt=$token';
       }
 
+      final authUrl = await _getAuthUrl();
       final response = await http.delete(
-        Uri.parse('$_authUrl/logout'),
+        Uri.parse('$authUrl/logout'),
         headers: headers,
       );
 
