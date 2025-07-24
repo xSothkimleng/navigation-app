@@ -4,6 +4,25 @@ import '../../../models/opportunity.dart';
 import '../../../services/opportunity_service.dart';
 import '../../../models/api_response.dart';
 
+// Data model for activity items
+class ActivityItem {
+  final String userName;
+  final String action;
+  final String activityType;
+  final String timestamp;
+  final String description;
+  final Color avatarColor;
+
+  ActivityItem({
+    required this.userName,
+    required this.action,
+    required this.activityType,
+    required this.timestamp,
+    required this.description,
+    required this.avatarColor,
+  });
+}
+
 class OpportunityDetailScreen extends StatefulWidget {
   final String opportunityId;
 
@@ -784,6 +803,28 @@ class _OpportunityDetailScreenState extends State<OpportunityDetailScreen> {
   }
 
   Widget _buildActivitiesCard() {
+    // Sample activities data - you can replace this with actual data
+    final List<ActivityItem> activities = [
+      ActivityItem(
+        userName: 'John',
+        action: 'created',
+        activityType: 'Email',
+        timestamp: '7/22/2025, 12:00:13 PM',
+        description:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean elementum mauris ex, vel sollicitudin ligula molestie sed. Mauris nec quam vehicula, finibus lorem eu, vestibulum turpis. Nulla mattis vehicula molestie...',
+        avatarColor: Colors.blue,
+      ),
+      ActivityItem(
+        userName: 'Jack',
+        action: 'created',
+        activityType: 'Call',
+        timestamp: '7/22/2025, 12:00:13 PM',
+        description:
+            'Vivamus rhoncus feugiat libero at viverra. Integer at sapien quam. Proin tincidunt bibendum ultrices. Integer quam leo, commodo sit amet imperdiet a, congue quis est...',
+        avatarColor: Colors.green,
+      ),
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -795,50 +836,86 @@ class _OpportunityDetailScreenState extends State<OpportunityDetailScreen> {
             color: Colors.black87,
           ),
         ),
-        const SizedBox(height: 8),
-        // Sample activity items
-        _buildActivityItem(
-          'John',
-          'created',
-          'Email',
-          '7/22/2025, 12:00:13 PM',
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean elementum mauris ex, vel sollicitudin ligula molestie sed. Mauris nec quam vehicula, finibus lorem eu, vestibulum turpis. Nulla mattis vehicula molestie...',
-          Colors.blue,
-        ),
-        const SizedBox(height: 16),
-        _buildActivityItem(
-          'Jack',
-          'created',
-          'Call',
-          '7/22/2025, 12:00:13 PM',
-          'Vivamus rhoncus feugiat libero at viverra. Integer at sapien quam. Proin tincidunt bibendum ultrices. Integer quam leo, commodo sit amet imperdiet a, congue quis est...',
-          Colors.green,
-        ),
+        const SizedBox(height: 12),
+        _buildActivitiesStepper(activities),
       ],
     );
   }
 
-  Widget _buildActivityItem(
-    String userName,
-    String action,
-    String activityType,
-    String timestamp,
-    String description,
-    Color avatarColor,
-  ) {
+  Widget _buildActivitiesStepper(List<ActivityItem> activities) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: activities.length,
+      itemBuilder: (context, index) {
+        final activity = activities[index];
+        final bool isLast = index == activities.length - 1;
+
+        return IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Timeline column
+              Column(
+                children: [
+                  // Circle indicator
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 2,
+                      ),
+                    ),
+                    child: Icon(
+                      _getActivityIcon(activity.activityType),
+                      color: Colors.white,
+                      size: 16,
+                    ),
+                  ),
+                  // Connecting line (if not last item)
+                  if (!isLast)
+                    Expanded(
+                      child: Container(
+                        width: 2,
+                        color: Colors.grey[300],
+                        margin: const EdgeInsets.symmetric(vertical: 4),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(width: 8),
+              // Content column
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: isLast ? 0 : 16),
+                  child: _buildActivityCard(activity),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildActivityCard(ActivityItem activity) {
     return Card(
       margin: EdgeInsets.zero,
       elevation: 0,
       color: Colors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         side: const BorderSide(
-          color: Color(0xFFC5C6CC),
+          color: Color(0xFFE0E0E0),
           width: 1,
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -847,18 +924,18 @@ class _OpportunityDetailScreenState extends State<OpportunityDetailScreen> {
               children: [
                 // User avatar
                 Container(
-                  width: 40,
-                  height: 40,
+                  width: 32,
+                  height: 32,
                   decoration: BoxDecoration(
-                    color: avatarColor,
-                    borderRadius: BorderRadius.circular(20),
+                    color: activity.avatarColor,
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   child: Center(
                     child: Text(
-                      userName[0].toUpperCase(),
+                      activity.userName[0].toUpperCase(),
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -869,48 +946,41 @@ class _OpportunityDetailScreenState extends State<OpportunityDetailScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            userName,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
+                      // User name and action in one line
+                      RichText(
+                        text: TextSpan(
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black87,
                           ),
-                          const SizedBox(width: 4),
-                          Text(
-                            action,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: avatarColor.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              activityType,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: avatarColor,
+                          children: [
+                            TextSpan(
+                              text: activity.userName,
+                              style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                          ),
-                        ],
+                            TextSpan(
+                              text: ' ${activity.action} ',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            TextSpan(
+                              text: activity.activityType,
+                              style: TextStyle(
+                                color: activity.avatarColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 4),
+                      // Timestamp
                       Text(
-                        timestamp,
+                        activity.timestamp,
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[500],
@@ -919,19 +989,14 @@ class _OpportunityDetailScreenState extends State<OpportunityDetailScreen> {
                     ],
                   ),
                 ),
-                Icon(
-                  Icons.more_horiz,
-                  color: Colors.grey[400],
-                  size: 20,
-                ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             // Activity description
             Text(
-              description,
+              activity.description,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 13,
                 color: Colors.grey[700],
                 height: 1.4,
               ),
@@ -940,5 +1005,24 @@ class _OpportunityDetailScreenState extends State<OpportunityDetailScreen> {
         ),
       ),
     );
+  }
+
+  IconData _getActivityIcon(String activityType) {
+    switch (activityType.toLowerCase()) {
+      case 'email':
+        return Icons.email;
+      case 'call':
+        return Icons.phone;
+      case 'opportunity':
+        return Icons.business_center;
+      case 'task':
+        return Icons.task_alt;
+      case 'meeting':
+        return Icons.event;
+      case 'note':
+        return Icons.note;
+      default:
+        return Icons.circle;
+    }
   }
 }

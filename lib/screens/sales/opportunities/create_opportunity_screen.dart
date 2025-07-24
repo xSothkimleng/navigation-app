@@ -8,6 +8,7 @@ import 'package:salesquake_app/services/territory_service.dart';
 import 'package:salesquake_app/services/company_service.dart';
 import 'package:salesquake_app/services/contact_service.dart';
 import 'package:intl/intl.dart';
+import 'package:geolocator/geolocator.dart';
 
 class CreateOpportunityScreen extends StatefulWidget {
   final VoidCallback? onOpportunityCreated;
@@ -31,6 +32,7 @@ class _CreateOpportunityScreenState extends State<CreateOpportunityScreen> {
 
   final bool _isActive = true;
   bool _isLoading = false;
+  bool _isGettingLocation = false;
 
   // Dropdown selections
   List<StageInfo> _stages = [];
@@ -170,6 +172,94 @@ class _CreateOpportunityScreenState extends State<CreateOpportunityScreen> {
     super.dispose();
   }
 
+  Future<void> _getCurrentLocation() async {
+    setState(() {
+      _isGettingLocation = true;
+    });
+
+    try {
+      // Check if location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Location services are disabled. Please enable them in settings.'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+        return;
+      }
+
+      // Check location permissions
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Location permissions are denied'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Location permissions are permanently denied. Please enable them in settings.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
+      }
+
+      // Get current position
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      if (mounted) {
+        setState(() {
+          // Round to exactly 6 decimal places as required by backend validation
+          _latitudeController.text = position.latitude.toStringAsFixed(6);
+          _longitudeController.text = position.longitude.toStringAsFixed(6);
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Current location retrieved successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to get current location: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isGettingLocation = false;
+        });
+      }
+    }
+  }
+
   Future<void> _saveOpportunity() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -227,7 +317,10 @@ class _CreateOpportunityScreenState extends State<CreateOpportunityScreen> {
             return;
           }
 
-          location = [lat, lng];
+          // Round to exactly 6 decimal places as required by backend validation
+          final roundedLat = double.parse(lat.toStringAsFixed(6));
+          final roundedLng = double.parse(lng.toStringAsFixed(6));
+          location = [roundedLat, roundedLng];
         } catch (e) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -850,9 +943,8 @@ class _CreateOpportunityScreenState extends State<CreateOpportunityScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 12),
 
-                        // Location Override Section
+                        // Location Section
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -860,17 +952,44 @@ class _CreateOpportunityScreenState extends State<CreateOpportunityScreen> {
                               children: [
                                 const Icon(Icons.location_on,
                                     color: Colors.blue, size: 20),
-                                const SizedBox(width: 8),
-                                const Text(
-                                  'Location Override (Optional)',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
+                                const SizedBox(width: 4),
+                                const Expanded(
+                                  child: Text(
+                                    'Location',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
+                                ),
+                                TextButton(
+                                  onPressed: _isGettingLocation
+                                      ? null
+                                      : _getCurrentLocation,
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.blue,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 0, vertical: 4),
+                                  ),
+                                  child: _isGettingLocation
+                                      ? const SizedBox(
+                                          height: 14,
+                                          width: 14,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 1.5,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                    Colors.blue),
+                                          ),
+                                        )
+                                      : const Text(
+                                          'Get Current',
+                                          style: TextStyle(fontSize: 14),
+                                        ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 4),
                             // Latitude
                             SizedBox(
                               height: 50,
