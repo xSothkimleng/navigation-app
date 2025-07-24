@@ -55,4 +55,23 @@ class AppRoutes {
     contacts: createContact,
     opportunities: createOpportunity,
   };
+
+  // Hidden routes - routes that exist but should not be shown in navigation
+  static const Set<String> hiddenRoutes = {
+    // CRM Routes (hidden for now - no functionality)
+    suppliers,
+    products,
+    // GTM Routes (hidden for now - no functionality)
+    quotaPlanning,
+    salesForecast,
+    profitLoss,
+    // Sales Routes (hidden for now)
+    invoices,
+    proposals,
+  };
+
+  // Helper method to check if a route should be visible in navigation
+  static bool isRouteVisible(String route) {
+    return !hiddenRoutes.contains(route);
+  }
 }

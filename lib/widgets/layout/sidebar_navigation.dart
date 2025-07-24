@@ -212,7 +212,7 @@ class _SidebarNavigationState extends State<SidebarNavigation>
           label: 'Products',
           route: AppRoutes.products,
         ),
-      ],
+      ].where((item) => AppRoutes.isRouteVisible(item.route)).toList(),
     ),
     NavigationGroup(
       icon: Icons.trending_up_outlined,
@@ -237,7 +237,7 @@ class _SidebarNavigationState extends State<SidebarNavigation>
           label: 'Profit & Loss',
           route: AppRoutes.profitLoss,
         ),
-      ],
+      ].where((item) => AppRoutes.isRouteVisible(item.route)).toList(),
     ),
     NavigationGroup(
       icon: Icons.attach_money_outlined,
@@ -268,9 +268,9 @@ class _SidebarNavigationState extends State<SidebarNavigation>
           label: 'Proposals',
           route: AppRoutes.proposals,
         ),
-      ],
+      ].where((item) => AppRoutes.isRouteVisible(item.route)).toList(),
     ),
-  ];
+  ].where((group) => group.children.isNotEmpty).toList();
 
   Future<void> _handleLogout() async {
     try {
@@ -372,52 +372,8 @@ class _SidebarNavigationState extends State<SidebarNavigation>
                 _buildNavigationTile(_navigationItems[0]),
                 const SizedBox(height: 8),
 
-                // CRM Section
-                _buildExpandableSection(
-                  group: _navigationGroups[0],
-                  isExpanded: _isCrmExpanded,
-                  heightAnimation: _crmHeightAnimation,
-                  onToggle: () {
-                    setState(() => _isCrmExpanded = !_isCrmExpanded);
-                    if (_isCrmExpanded) {
-                      _crmAnimationController.forward();
-                    } else {
-                      _crmAnimationController.reverse();
-                    }
-                  },
-                ),
-                const SizedBox(height: 8),
-
-                // GTM Section
-                _buildExpandableSection(
-                  group: _navigationGroups[1],
-                  isExpanded: _isGtmExpanded,
-                  heightAnimation: _gtmHeightAnimation,
-                  onToggle: () {
-                    setState(() => _isGtmExpanded = !_isGtmExpanded);
-                    if (_isGtmExpanded) {
-                      _gtmAnimationController.forward();
-                    } else {
-                      _gtmAnimationController.reverse();
-                    }
-                  },
-                ),
-                const SizedBox(height: 8),
-
-                // Sales Section
-                _buildExpandableSection(
-                  group: _navigationGroups[2],
-                  isExpanded: _isSalesExpanded,
-                  heightAnimation: _salesHeightAnimation,
-                  onToggle: () {
-                    setState(() => _isSalesExpanded = !_isSalesExpanded);
-                    if (_isSalesExpanded) {
-                      _salesAnimationController.forward();
-                    } else {
-                      _salesAnimationController.reverse();
-                    }
-                  },
-                ),
+                // Build sections dynamically based on available groups
+                ..._buildAllSections(),
               ],
             ),
           ),
@@ -572,6 +528,78 @@ class _SidebarNavigationState extends State<SidebarNavigation>
         onTap: () => _navigateToRoute(item.route),
       ),
     );
+  }
+
+  List<Widget> _buildAllSections() {
+    final sections = <Widget>[];
+
+    for (final group in _navigationGroups) {
+      // Determine which expansion state and animation to use based on group label
+      bool isExpanded;
+      Animation<double> heightAnimation;
+      AnimationController animationController;
+
+      switch (group.label) {
+        case 'CRM':
+          isExpanded = _isCrmExpanded;
+          heightAnimation = _crmHeightAnimation;
+          animationController = _crmAnimationController;
+          break;
+        case 'GTM':
+          isExpanded = _isGtmExpanded;
+          heightAnimation = _gtmHeightAnimation;
+          animationController = _gtmAnimationController;
+          break;
+        case 'Sales':
+          isExpanded = _isSalesExpanded;
+          heightAnimation = _salesHeightAnimation;
+          animationController = _salesAnimationController;
+          break;
+        default:
+          continue; // Skip unknown groups
+      }
+
+      sections.add(
+        _buildExpandableSection(
+          group: group,
+          isExpanded: isExpanded,
+          heightAnimation: heightAnimation,
+          onToggle: () {
+            setState(() {
+              switch (group.label) {
+                case 'CRM':
+                  _isCrmExpanded = !_isCrmExpanded;
+                  if (_isCrmExpanded) {
+                    animationController.forward();
+                  } else {
+                    animationController.reverse();
+                  }
+                  break;
+                case 'GTM':
+                  _isGtmExpanded = !_isGtmExpanded;
+                  if (_isGtmExpanded) {
+                    animationController.forward();
+                  } else {
+                    animationController.reverse();
+                  }
+                  break;
+                case 'Sales':
+                  _isSalesExpanded = !_isSalesExpanded;
+                  if (_isSalesExpanded) {
+                    animationController.forward();
+                  } else {
+                    animationController.reverse();
+                  }
+                  break;
+              }
+            });
+          },
+        ),
+      );
+      sections.add(const SizedBox(height: 8));
+    }
+
+    return sections;
   }
 
   Widget _buildExpandableSection({
