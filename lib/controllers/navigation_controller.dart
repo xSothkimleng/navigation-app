@@ -101,7 +101,7 @@ class NavigationController extends ChangeNotifier {
         _currentScreen = OpportunitiesScreen(navigationController: this);
         break;
       case AppRoutes.routePlanner:
-        _currentScreen = const RoutePlannerScreen();
+        _currentScreen = RoutePlannerScreen();
         break;
       case AppRoutes.invoices:
         _currentScreen = const InvoicesScreen();
