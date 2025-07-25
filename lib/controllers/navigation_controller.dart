@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:salesquake_app/screens/sales/route_planner/route_planner_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/crm/contacts/contacts_screen.dart';
 import '../screens/crm/companies/companies_screen.dart';
@@ -8,7 +9,6 @@ import '../screens/gtm/quota_planning_screen.dart';
 import '../screens/gtm/sales_forecast_screen.dart';
 import '../screens/gtm/profit_loss_screen.dart';
 import '../screens/sales/opportunities/opportunities_screen.dart';
-import '../screens/sales/activity_planner_screen.dart';
 import '../screens/sales/invoices_screen.dart';
 import '../screens/sales/proposals_screen.dart';
 import '../routes/app_routes.dart';
@@ -100,8 +100,8 @@ class NavigationController extends ChangeNotifier {
       case AppRoutes.opportunities:
         _currentScreen = OpportunitiesScreen(navigationController: this);
         break;
-      case AppRoutes.activityPlanner:
-        _currentScreen = const ActivityPlannerScreen();
+      case AppRoutes.routePlanner:
+        _currentScreen = const RoutePlannerScreen();
         break;
       case AppRoutes.invoices:
         _currentScreen = const InvoicesScreen();

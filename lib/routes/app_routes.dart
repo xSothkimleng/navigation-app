@@ -17,7 +17,7 @@ class AppRoutes {
   static const String opportunities = '/sales/opportunities';
   static const String createOpportunity = '/sales/opportunities/create';
   static const String opportunityDetail = '/sales/opportunities/detail';
-  static const String activityPlanner = '/sales/activity-planner';
+  static const String routePlanner = '/sales/route-planner/route-planner-screen';
   static const String invoices = '/sales/invoices';
   static const String proposals = '/sales/proposals';
 
@@ -37,7 +37,7 @@ class AppRoutes {
     salesForecast: 'Sales Forecast',
     profitLoss: 'Profit & Loss',
     opportunities: 'Opportunities',
-    activityPlanner: 'Activity Planner',
+    routePlanner: 'Route Planner',
     invoices: 'Invoices',
     proposals: 'Proposals',
   };

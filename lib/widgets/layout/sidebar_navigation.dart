@@ -20,8 +20,7 @@ class SidebarNavigation extends StatefulWidget {
   State<SidebarNavigation> createState() => _SidebarNavigationState();
 }
 
-class _SidebarNavigationState extends State<SidebarNavigation>
-    with TickerProviderStateMixin {
+class _SidebarNavigationState extends State<SidebarNavigation> with TickerProviderStateMixin {
   bool _isCrmExpanded = false;
   bool _isGtmExpanded = false;
   bool _isSalesExpanded = false;
@@ -138,8 +137,7 @@ class _SidebarNavigationState extends State<SidebarNavigation>
       _isSalesExpanded = route.startsWith('/sales/');
 
       // Animate section changes only if controllers are initialized
-      if (_crmAnimationController.isCompleted ||
-          _crmAnimationController.isDismissed) {
+      if (_crmAnimationController.isCompleted || _crmAnimationController.isDismissed) {
         if (_isCrmExpanded != wasCrmExpanded) {
           if (_isCrmExpanded) {
             _crmAnimationController.forward();
@@ -149,8 +147,7 @@ class _SidebarNavigationState extends State<SidebarNavigation>
         }
       }
 
-      if (_gtmAnimationController.isCompleted ||
-          _gtmAnimationController.isDismissed) {
+      if (_gtmAnimationController.isCompleted || _gtmAnimationController.isDismissed) {
         if (_isGtmExpanded != wasGtmExpanded) {
           if (_isGtmExpanded) {
             _gtmAnimationController.forward();
@@ -160,8 +157,7 @@ class _SidebarNavigationState extends State<SidebarNavigation>
         }
       }
 
-      if (_salesAnimationController.isCompleted ||
-          _salesAnimationController.isDismissed) {
+      if (_salesAnimationController.isCompleted || _salesAnimationController.isDismissed) {
         if (_isSalesExpanded != wasSalesExpanded) {
           if (_isSalesExpanded) {
             _salesAnimationController.forward();
@@ -253,8 +249,8 @@ class _SidebarNavigationState extends State<SidebarNavigation>
         NavigationItem(
           icon: Icons.event_note_outlined,
           selectedIcon: Icons.event_note,
-          label: 'Activity Planner',
-          route: AppRoutes.activityPlanner,
+          label: 'Route Planner',
+          route: AppRoutes.routePlanner,
         ),
         NavigationItem(
           icon: Icons.receipt_long_outlined,
@@ -466,8 +462,7 @@ class _SidebarNavigationState extends State<SidebarNavigation>
                   onTap: _handleLogout,
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     child: Row(
                       children: [
                         Icon(
@@ -654,9 +649,7 @@ class _SidebarNavigationState extends State<SidebarNavigation>
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16),
                   child: Column(
-                    children: group.children
-                        .map((item) => _buildNavigationTile(item))
-                        .toList(),
+                    children: group.children.map((item) => _buildNavigationTile(item)).toList(),
                   ),
                 ),
               ),
