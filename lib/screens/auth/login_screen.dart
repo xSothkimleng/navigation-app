@@ -50,15 +50,37 @@ class _LoginScreenState extends State<LoginScreen> {
           password: _passwordController.text,
         );
 
-        // Save the "Keep me logged in" preference
-        await AuthService.saveKeepMeLoggedIn(_keepMeLoggedIn);
+        // Check if login was successful
+        if (result.error != null) {
+          // Login failed
+          print('=== LOGIN FAILED ===');
+          print('Error: ${result.error}');
+          print('==================');
+          
+          setState(() {
+            _errorMessage = result.error;
+          });
+          
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(result.error!),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+          return; // Exit here, don't proceed with success flow
+        }
 
-        // Handle successful login
+        // Login was successful
         print('=== LOGIN SUCCESS ===');
         print('Token: ${result.data?.token}');
         print('User Info: ${result.data?.user}');
-        print('Keep me logged in: $_keepMeLoggedIn');
         print('===================');
+
+        // Save the "Keep me logged in" preference only on success
+        await AuthService.saveKeepMeLoggedIn(_keepMeLoggedIn);
+        print('Keep me logged in preference saved: $_keepMeLoggedIn');
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

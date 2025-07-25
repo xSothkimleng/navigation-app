@@ -48,6 +48,7 @@ class AuthService {
       print('Login response headers: ${response.headers}');
 
       if (response.statusCode == 200) {
+        print('=== STATUS CODE IS 200 - ENTERING SUCCESS BLOCK ===');
         // Backend returns plain text "login successful" for success
         print('Login successful - Response: ${response.body}');
 
@@ -84,6 +85,10 @@ class AuthService {
           message: response.body, // "login successful"
         );
       } else {
+        print('=== STATUS CODE IS NOT 200 - ENTERING ERROR BLOCK ===');
+        print('Status code: ${response.statusCode}');
+        print('Will NOT save any tokens or user info');
+        
         // Parse error response in format { "message": string, "error": string }
         try {
           final responseData = jsonDecode(response.body);
@@ -147,8 +152,11 @@ class AuthService {
   }
 
   static Future<void> _saveTokenToStorage(String token) async {
+    print('=== SAVING TOKEN TO STORAGE ===');
+    print('Token being saved: ${token.substring(0, 20)}...');
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('jwt_token', token);
+    print('Token successfully saved to SharedPreferences');
   }
 
   static Future<void> saveKeepMeLoggedIn(bool keepLoggedIn) async {
